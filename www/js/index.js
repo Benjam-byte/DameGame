@@ -19,11 +19,28 @@
 
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-document.addEventListener('deviceready', onDeviceReady, false);
+// document.addEventListener('deviceready', onDeviceReady, false);
 
-function onDeviceReady() {
-    // Cordova is now initialized. Have fun!
+// function onDeviceReady() {
+//     // Cordova is now initialized. Have fun!
 
-    console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-    document.getElementById('deviceready').classList.add('ready');
+//     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
+//     document.getElementById('deviceready').classList.add('ready');
+// }
+window.onload=function()   { 
+    const game = true;
+
+    ; (function () {
+        var partie = new Party(new Joueur(1, "red"), new Joueur(2, "green"));
+        function main(tFrame) {
+            let cbId = window.requestAnimationFrame(main);
+            if (!game) {
+                window.cancelAnimationFrame(cbId);
+                console.log("Game over");
+            } else { //boucle de jeu
+
+            }
+        }
+        main(0); // Début du cycle
+    })();
 }
