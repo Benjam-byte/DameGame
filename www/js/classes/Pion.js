@@ -26,6 +26,12 @@ class Pion {
 
         newParent.ref.appendChild(this.ref);
         newParent.pion = this;
-        console.log("pion deplacer");
+    }
+
+    delete(){
+        this.parent.parent.deletePion(this)
+        delete this.parent.pion;
+        this.ref.remove();
+        delete this;
     }
 }

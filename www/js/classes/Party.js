@@ -38,8 +38,13 @@ class Party {
                 this.board.clearViewSpecificShot();
                 // on cherche la case de destination
                 let destinationSquare = this.board.searchCase(parseInt(event.target.getAttribute("x")), parseInt(event.target.getAttribute("y")));
+                // on cherche le coup dans l
+                let shot = this.searchCurrentShot(destinationSquare);
                 // on fait bouger le pion sur cette case
-                this.selectedSquare.pion.move(destinationSquare);
+                shot.pion.move(destinationSquare);
+                if(shot.eatedPion){
+                    shot.eatedPion.delete();
+                }
                 this.switchTurn();
             }
         })
@@ -49,6 +54,16 @@ class Party {
     viewDisponibleShot(){
         let player =  this.gameTurn.color == 'white' ? this.player1 : this.player2;
         this.currentShots = this.board.viewShots(player.color)
+    }
+
+    searchCurrentShot(square){
+        let currentShot;
+        this.currentShots.forEach(shot =>{
+            if(shot.destination === square && this.selectedSquare.pion === shot.pion){
+                currentShot = shot; 
+            }
+        })
+        return currentShot;
     }
 
     // change de tour

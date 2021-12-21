@@ -57,18 +57,75 @@ class Board {
             let y = color === 'white' ? pion.position.y - 1 : pion.position.y + 1;
             let x1 = pion.position.x - 1;
             let x2 = pion.position.x + 1;
-            // on cherche la case diagonale bas gauche
+            // on cherche la case diagonale  gauche
             if((x1 >= 0 && x1 < this.size) && (y >= 0 && y < this.size)){
                 let square = this.searchCase(x1, y);
+                // si elle est disponible on crée un nouveau coup
                 if(!square.pion){
                     shots.push(new Shot(pion, square))
+                // sinon on regarde si le pion est ennemi et si la case d'après est libre
+                } else {
+                    if(square.pion.color != color){
+                        let y1 = color === 'white' ? y - 1 : y + 1;
+                        let x3 = x1 - 1;
+                        if((x3 >= 0 && x3 < this.size) && (y1 >= 0 && y1 < this.size)){
+                            let square2 = this.searchCase(x3, y1);
+                            if(!square2.pion){
+                                shots.push(new Shot(pion, square2, square.pion))
+                            }
+                        }
+                    }
                 }
             }
-            // on cherche la case diagonale bas droit
+            // on cherche la case diagonale droit
             if((x2 >= 0 && x2 < this.size) && (y >= 0 && y < this.size)){
                 let square = this.searchCase(x2, y);
                 if(!square.pion){
                     shots.push(new Shot(pion, square))
+                } else {
+                    if(square.pion.color != color){
+                        let y1 = color === 'white' ? y - 1 : y + 1;
+                        let x4 = x2 + 1;
+                        if((x4 >= 0 && x4 < this.size) && (y1 >= 0 && y1 < this.size)){
+                            let square2 = this.searchCase(x4, y1);
+                            if(!square2.pion){
+                                shots.push(new Shot(pion, square2, square.pion))
+                            }
+                        }
+                    }
+                }
+            }
+            // on cherche la case diagonale gauche inverse (voir si on peut manger un pion à l'envers)
+            let yReverse = color === 'white' ? pion.position.y + 1 : pion.position.y - 1;
+            if((x1 >= 0 && x1 < this.size) && (yReverse >= 0 && yReverse < this.size)){
+                let square = this.searchCase(x1, yReverse);
+                if(square.pion){
+                    if(square.pion.color != color){
+                        let yReverse1 = color === 'white' ? yReverse + 1 : yReverse - 1;
+                        let x3 = x1 - 1;
+                        if((x3 >= 0 && x3 < this.size) && (yReverse1 >= 0 && yReverse1 < this.size)){
+                            let square2 = this.searchCase(x3, yReverse1);
+                            if(!square2.pion){
+                                shots.push(new Shot(pion, square2, square.pion))
+                            }
+                        }
+                    }
+                }
+            }
+            // on cherche la case diagonale droite inverse (voir si on peut manger un pion à l'envers)
+            if((x2 >= 0 && x2 < this.size) && (yReverse >= 0 && yReverse < this.size)){
+                let square = this.searchCase(x2, yReverse);
+                if(square.pion){
+                    if(square.pion.color != color){
+                        let yReverse1 = color === 'white' ? yReverse + 1 : yReverse - 1;
+                        let x4 = x2 + 1;
+                        if((x4 >= 0 && x4 < this.size) && (yReverse1 >= 0 && yReverse1 < this.size)){
+                            let square2 = this.searchCase(x4, yReverse1);
+                            if(!square2.pion){
+                                shots.push(new Shot(pion, square2, square.pion))
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -106,5 +163,15 @@ class Board {
         while(shotSelected[0]){
             shotSelected[0].classList.remove('selected')
         }
+    }
+
+    // supprime un pion des paquets
+    deletePion(pion){
+        let pions = pion.color === 'white' ? this.whitePions : this.blackPions;
+        pions.forEach(element => {
+            if(element === pion){
+                pions.splice(pions.indexOf(element), 1)
+            }
+        })
     }
 }
