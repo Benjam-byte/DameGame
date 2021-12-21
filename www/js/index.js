@@ -28,19 +28,5 @@
 //     document.getElementById('deviceready').classList.add('ready');
 // }
 window.onload=function()   { 
-    const game = true;
-
-    ; (function () {
-        var partie = new Party(new Joueur(1, "red"), new Joueur(2, "green"));
-        function main(tFrame) {
-            let cbId = window.requestAnimationFrame(main);
-            if (!game) {
-                window.cancelAnimationFrame(cbId);
-                console.log("Game over");
-            } else { //boucle de jeu
-
-            }
-        }
-        main(0); // Début du cycle
-    })();
+    var game = new Party("Jean", "Paul", 10); 
 }

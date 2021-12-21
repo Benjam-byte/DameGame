@@ -1,31 +1,29 @@
 class Pion {
-    constructor(position, joueur) {
+    constructor(position, color, parent) {
+        this.parent = parent;
         this.ref;
         this.position = position;
-        this.couleur = joueur.couleur;
-        this.joueur = joueur;
-        this.estDame = false;
+        this.color = color;
+        this.isQueen = false;
+        this.drawPion();
     }
 
-    drawPion(Parent) {
+    drawPion() {
         let pion = document.createElement("div");
-        pion.setAttribute("id", "pion" + this.position.x + this.position.y);
-        pion.style.width = "30px";
-        pion.style.height = "30px";
-        pion.style.backgroundColor = this.couleur;
-        pion.style.borderRadius = "30px";
-        pion.style.marginLeft = "5px";
-        pion.style.marginTop = "5px";
+        pion.setAttribute("class", "pion");
+        pion.style.backgroundColor = this.color == 'white' ? 'BlanchedAlmond' : 'Chocolate';
         this.ref = pion;
-        Parent.appendChild(pion);
-        console.log("pion ajouter");
+        this.parent.ref.appendChild(pion);
     }
 
-    deplacer(newParent) {
+    move(newParent) {
+        this.parent.ref.removeChild(this.ref);
+        delete this.parent.pion;
+        this.parent = newParent;
         this.position = newParent.position;
-        this.ref.remove();
-        newParent.appendChild(this.ref);
+
+        newParent.ref.appendChild(this.ref);
+        newParent.pion = this;
         console.log("pion deplacer");
     }
-
 }

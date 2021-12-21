@@ -1,19 +1,28 @@
 class Case {
-    constructor(position, couleur) {
+    constructor(position, color, parent) {
+        this.parent = parent;
         this.ref;
         this.position = position;
-        this.couleur = couleur;
-        this.pion = false;
+        this.color = color;
+        this.pion;
+        this.drawCase();
     }
 
-    drawCase(Parent) {
-        var Case = document.createElement("div");
-        Case.setAttribute("id", "case");
-        Case.style.width = "40px";
-        Case.style.height = "40px";
-        Case.style.backgroundColor = this.couleur;
-        Case.style.display = "inline-block";
+    drawCase() {
+        let Case = document.createElement("div");
+        this.setAttributes(Case,{"class": "case", "x" : this.position.x, "y" : this.position.y});
+        let dimension = ((80 * window.innerHeight) / 100) / this.parent.size;
+        Case.style.width = dimension + "px";
+        Case.style.height = dimension + "px";
+        Case.style.backgroundColor = this.color;
+        this.parent.ref.appendChild(Case);
         this.ref = Case;
-        Parent.appendChild(Case);
     }
+
+    setAttributes(el, attrs) {
+        for(var key in attrs) {
+            el.setAttribute(key, attrs[key]);
+        }
+    }
+
 }
