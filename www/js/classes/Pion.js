@@ -8,6 +8,7 @@ class Pion {
         this.drawPion();
     }
 
+    // construit un pion
     drawPion() {
         let pion = document.createElement("div");
         pion.setAttribute("class", "pion");
@@ -16,6 +17,7 @@ class Pion {
         this.parent.ref.appendChild(pion);
     }
 
+    // bouge le pion vers une case (parent) de destination
     move(newParent) {
         this.parent.ref.removeChild(this.ref);
         delete this.parent.pion;

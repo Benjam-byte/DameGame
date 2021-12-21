@@ -8,6 +8,7 @@ class Case {
         this.drawCase();
     }
 
+    // construit une case
     drawCase() {
         let Case = document.createElement("div");
         this.setAttributes(Case,{"class": "case", "x" : this.position.x, "y" : this.position.y});
@@ -19,6 +20,7 @@ class Case {
         this.ref = Case;
     }
 
+    // permet de set plusieurs attributs en même temps
     setAttributes(el, attrs) {
         for(var key in attrs) {
             el.setAttribute(key, attrs[key]);

@@ -2,15 +2,14 @@ class Board {
     constructor(size) {
         this.cases = [];
         this.ref = window.document.getElementById("board");
-        this.size = size;
+        this.size = size; // nombre de case
     
         this.drawBoard();
         this.whitePions = this.createPions('white');
         this.blackPions = this.createPions('black', true);
-        console.log(this.cases)
     }
 
-
+    // trace les cases du plateau
     drawBoard() {
         for (let y = 0; y < this.size; y++) {
             for (let x = 0; x < this.size; x++) {
@@ -20,6 +19,8 @@ class Board {
         }
     }
 
+    // génère des pions et les places sur le plateau
+    // reverse commence a tracer les cases sur la seconde partie du tableau
     createPions(color, reverse){
         let coef = reverse ? 0 : (this.size / 2) + 1
         let pions = []
@@ -36,6 +37,7 @@ class Board {
         return pions;
     }
 
+    // retourne une case selon ses coordonnées
     searchCase(x, y){
         let square;
         this.cases.forEach(item => {
@@ -46,6 +48,7 @@ class Board {
         return square;
     }
 
+    // retourne les coups possible d'un joueur
     searchShot(color){
         let shots = []
         let pions = color === 'white' ? this.whitePions : this.blackPions;
@@ -72,6 +75,7 @@ class Board {
         return shots
     }
 
+    // emet un feedback des coups possible d'un joueur
     viewShots(color){
         this.clearViewShots();
         let shots = this.searchShot(color);
@@ -81,12 +85,14 @@ class Board {
         return shots;
     }
 
+    // emet un feedback du coup envisagé
     viewSpecificShot(shot){
         if(shot.destination.ref.classList.contains('available')){
             shot.destination.ref.classList.add('selected');
         }
     }
 
+    // supprime le feedback des coups possible
     clearViewShots(){
         let shotsAvailable = document.getElementsByClassName('available');
         while(shotsAvailable[0]){
@@ -94,6 +100,7 @@ class Board {
         }
     }
 
+    // supprime le feedback du coup envisagé
     clearViewSpecificShot(){
         let shotSelected = document.getElementsByClassName('selected');
         while(shotSelected[0]){
