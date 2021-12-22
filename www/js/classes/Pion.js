@@ -34,4 +34,9 @@ class Pion {
         this.ref.remove();
         delete this;
     }
+
+    becomesQueen(){
+        this.isQueen = true;
+        this.ref.classList.add('queen')
+    }
 }

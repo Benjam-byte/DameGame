@@ -29,6 +29,13 @@ body{
     transition: .3s;
 }
 
+.queen{
+    background-image: url("../img/crown.svg");
+    background-size: 65%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .available{
     background-color: blue !important;
 }
