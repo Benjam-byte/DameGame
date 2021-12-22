@@ -6,6 +6,7 @@ class Party {
         this.gameTurn = this.player1;
         this.selectedSquare;
         this.currentShots;
+        this.requiredShots = []
         this.createEvent();
         this.viewDisponibleShot();
     }
@@ -13,8 +14,10 @@ class Party {
     // détection des cliques
     createEvent(){
         this.board.ref.addEventListener('click', event => {
+            let chaine = this.requiredShots.length ? this.requiredShots[0].pion.ref : false;
+            let condition = (chaine === event.target || chaine === false) ? true : false;
             // si on clique sur un pion
-            if(event.target.classList.contains("pion")){
+            if(event.target.classList.contains("pion") && condition){
                 // on supprime le feedback des coups si il y'en avait
                 this.board.clearViewSpecificShot();
                 // on récupère les pions du joueur
@@ -38,14 +41,29 @@ class Party {
                 this.board.clearViewSpecificShot();
                 // on cherche la case de destination
                 let destinationSquare = this.board.searchCase(parseInt(event.target.getAttribute("x")), parseInt(event.target.getAttribute("y")));
-                // on cherche le coup dans l
+                // on cherche le coup des coups courant
                 let shot = this.searchCurrentShot(destinationSquare);
                 // on fait bouger le pion sur cette case
                 shot.pion.move(destinationSquare);
+                // si le coup a manger un pion on regarde si il peut enchainer
                 if(shot.eatedPion){
                     shot.eatedPion.delete();
+                    this.requiredShots = [];
+                    this.board.searchSpecificShot(shot.pion).forEach(element => {
+                        if(element.eatedPion != undefined){
+                            this.requiredShots.push(element);
+                        }
+                    })
+                    // si c'est le cas on attend qu'il joue
+                    if(this.requiredShots.length){
+                        this.viewDisponibleShot();
+                    // sinon on passe le tour normalement
+                    } else {
+                        this.switchTurn();
+                    }
+                } else {
+                    this.switchTurn();
                 }
-                this.switchTurn();
             }
         })
     }
