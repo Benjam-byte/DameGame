@@ -55,7 +55,13 @@ class Board {
         pions.forEach(pion => {
             shots = shots.concat(this.searchSpecificShot(pion));
         })
-        return shots
+        let shotsEatPion = []
+        shots.forEach(shot => {
+            if(shot.eatedPion){
+                shotsEatPion.push(shot)
+            }
+        })
+        return shotsEatPion.length ? shotsEatPion : shots;
     }
 
     searchSpecificShot(pion){
