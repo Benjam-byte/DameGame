@@ -114,18 +114,72 @@ class Board {
 
     searchSpecificShot(pion){
         let shotsForPion = []
-        // regarde si on peut se déplacer vers le bas ou le haut selon notre couleur
-        let y = pion.color === 'white' ? pion.position.y - 1 : pion.position.y + 1;
-        let x1 = pion.position.x - 1;
-        let x2 = pion.position.x + 1;
-        let forwardLeft = this.checkForwardMovement(pion, x1, y)
-        let forwardRight = this.checkForwardMovement(pion, x2, y, true)
+        // si le pion n'est pas une dame
+        if(!pion.isQueen){
+            // regarde si on peut se déplacer vers le bas ou le haut selon notre couleur
+            let y = pion.color === 'white' ? pion.position.y - 1 : pion.position.y + 1;
+            let x1 = pion.position.x - 1;
+            let x2 = pion.position.x + 1;
+            // a gauche
+            let forwardLeft = this.checkForwardMovement(pion, x1, y)
+            // a droite
+            let forwardRight = this.checkForwardMovement(pion, x2, y, true)
+            // regarde si on peut manger un pion vers l'arrière selon notre couleur
+            let yReverse = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1;
+            let backwardLeft = this.checkBackwardMovement(pion, x1, yReverse)
+            let backwardRight =this.checkBackwardMovement(pion, x2, yReverse, true)
 
-        let yReverse = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1;
-        let backwardLeft = this.checkBackwardMovement(pion, x1, yReverse)
-        let backwardRight =this.checkBackwardMovement(pion, x2, yReverse, true)
+            shotsForPion = forwardLeft.concat(forwardRight, backwardLeft, backwardRight);
+        // si le pion est une dame
+        } else {
+            let condition = true;
+            let y = pion.color === 'white' ? pion.position.y - 1 : pion.position.y + 1;
+            let x1 = pion.position.x - 1;
+            let x2 = pion.position.x + 1;
 
-        shotsForPion = forwardLeft.concat(forwardRight, backwardLeft, backwardRight);
+            let forwardLeft = [];
+            let forwardRight = [];
+            let backwardLeft = [];
+            let backwardRight = [];
+            // a gauche
+            while(condition){
+                let interForwardLeft = this.checkForwardMovement(pion, x1, y);
+                interForwardLeft.length ? forwardLeft = forwardLeft.concat(interForwardLeft) : condition = false;
+                y = pion.color === 'white' ? y - 1 : y + 1;
+                x1 -= 1;
+            }
+            condition = true;
+            y = pion.color === 'white' ? pion.position.y - 1 : pion.position.y + 1;
+            // a droite
+            while(condition){
+                let interForwardRight = this.checkForwardMovement(pion, x2, y, true);
+                interForwardRight.length ? forwardRight = forwardRight.concat(interForwardRight) : condition = false;
+                y = pion.color === 'white' ? y - 1 : y + 1;
+                x2 += 1;
+            }
+            condition = true;
+            y = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1;
+            x1 = pion.position.x - 1;
+            // a gauche inverse selon couleur
+            while(condition){
+                let interBackwardLeft = this.checkForwardMovement(pion, x1, y);
+                interBackwardLeft.length ? backwardLeft = backwardLeft.concat(interBackwardLeft) : condition = false;
+                y = pion.color === 'white' ? y + 1 : y - 1;
+                x1 -= 1;
+            }
+            condition = true;
+            y = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1;
+            x2 = pion.position.x + 1;
+            // a droite inverse selon couleur
+            while(condition){
+                let interBackwardRight = this.checkForwardMovement(pion, x2, y, true);
+                interBackwardRight.length ? backwardRight = backwardRight.concat(interBackwardRight) : condition = false;
+                y = pion.color === 'white' ? y + 1 : y - 1;
+                x2 += 1;
+            }
+            shotsForPion = forwardLeft.concat(forwardRight, backwardLeft, backwardRight);
+
+        }
         console.log(shotsForPion)
         return shotsForPion;
     }
