@@ -45,21 +45,29 @@ class Party {
                 let shot = this.searchCurrentShot(destinationSquare);
                 // on fait bouger le pion sur cette case
                 shot.pion.move(destinationSquare);
+                // on regarde si le pion devient dame
+                if(shot.queen){
+                    shot.pion.becomesQueen();
+                }
                 // si le coup a manger un pion on regarde si il peut enchainer
                 if(shot.eatedPion){
                     shot.eatedPion.delete();
                     this.requiredShots = [];
-                    this.board.searchSpecificShot(shot.pion).forEach(element => {
-                        if(element.eatedPion != undefined){
-                            this.requiredShots.push(element);
+                    if(!this.endGame()){
+                        this.board.searchSpecificShot(shot.pion).forEach(element => {
+                            if(element.eatedPion){
+                                this.requiredShots.push(element);
+                            }
+                        })
+                        // si c'est le cas on attend qu'il joue
+                        if(this.requiredShots.length){
+                            this.viewDisponibleShot();
+                        // sinon on passe le tour normalement
+                        } else {
+                            this.switchTurn();
                         }
-                    })
-                    // si c'est le cas on attend qu'il joue
-                    if(this.requiredShots.length){
-                        this.viewDisponibleShot();
-                    // sinon on passe le tour normalement
                     } else {
-                        this.switchTurn();
+                        alert("FIN DE PARTIE")
                     }
                 } else {
                     this.switchTurn();
@@ -88,5 +96,15 @@ class Party {
     switchTurn(){
         this.gameTurn = this.gameTurn == this.player1 ? this.player2 : this.player1;
         this.viewDisponibleShot();
+    }
+
+    // vérifie si le jeu est fini
+    endGame(){
+        if(!this.board.whitePions.length || !this.board.blackPions.length){
+            this.board.whitePions.length ? alert("BLANC WIN") : alert("BLACK WIN");
+            return true;
+        } else {
+            return false;
+        }
     }
 }

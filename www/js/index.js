@@ -28,5 +28,5 @@
 //     document.getElementById('deviceready').classList.add('ready');
 // }
 window.onload=function()   { 
-    var game = new Party("Jean", "Paul", 10); 
+    var game = new Party("Jean", "Paul", 6); 
 }

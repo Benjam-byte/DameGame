@@ -56,7 +56,6 @@ class Board {
         pions.forEach(pion => {
             shots = shots.concat(this.searchSpecificShot(pion));
         })
-        console.log(shots)
         // vérifie si le joueur doit manger des pions pour établir une priorité des coups
         let shotsEatPion = []
         shots.forEach(shot => {
@@ -64,27 +63,28 @@ class Board {
                 shotsEatPion.push(shot)
             }
         })
-        console.log(shotsEatPion)
         return shotsEatPion.length ? shotsEatPion : shots;
     }
 
     // right permet de vérifier le sens de la diagonale et queen d'interpréter le mouvement comme libre (pas de limite arrière)
     checkForwardMovement(pion, x, y, right, queen){
         let shotsForPion = [];
+        let becomesQueen = pion.color === 'white' ? (y === 0 ? true : false) : (y === this.size - 1 ? true : false);
         if((x >= 0 && x < this.size) && (y >= 0 && y < this.size)){
             let square = this.searchCase(x, y);
             // si elle est disponible on crée un nouveau coup
             if(!square.pion){
-                shotsForPion.push(new Shot(pion, square))
+                shotsForPion.push(new Shot(pion, square, false, becomesQueen))
             // sinon on regarde si le pion est ennemi et si la case d'après est libre
             } else {
                 if(square.pion.color != pion.color){
                     let y1 = queen ? (pion.color === 'white' ? y + 1 : y - 1) : (pion.color === 'white' ? y - 1 : y + 1); 
                     let x1 = right ? x + 1 : x - 1;
+                    becomesQueen = pion.color === 'white' ? (y1 === 0 ? true : false) : (y1 === this.size - 1 ? true : false);
                     if((x1 >= 0 && x1 < this.size) && (y1 >= 0 && y1 < this.size)){
                         let square2 = this.searchCase(x1, y1);
                         if(!square2.pion){
-                            shotsForPion.push(new Shot(pion, square2, square.pion))
+                            shotsForPion.push(new Shot(pion, square2, square.pion, becomesQueen))
                         }
                     }
                 }
@@ -101,10 +101,11 @@ class Board {
                 if(square.pion.color != pion.color){
                     let y1 = pion.color === 'white' ? y + 1 : y - 1;
                     let x1 = right ? x + 1 : x - 1;
+                    let becomesQueen = pion.color === 'white' ? (y1 === 0 ? true : false) : (y1 === this.size - 1 ? true : false);
                     if((x1 >= 0 && x1 < this.size) && (y1 >= 0 && y1 < this.size)){
                         let square2 = this.searchCase(x1, y1);
                         if(!square2.pion){
-                            shotsForPion.push(new Shot(pion, square2, square.pion))
+                            shotsForPion.push(new Shot(pion, square2, square.pion, becomesQueen))
                         }
                     }
                 }
@@ -124,7 +125,7 @@ class Board {
             // si un mouvement est récupéré c'est qu'on peut jouer dans cette drection
             if(interMovements.length){
                 queenShots = queenShots.concat(interMovements);
-                condition = interMovements[0].eatedPion != undefined ? false : true;
+                condition = interMovements[0].eatedPion ? false : true;
             // sinon c'est qu'il n'y a plus rien a jouer sur cette diagonale
             } else {
                 condition = false;
