@@ -68,7 +68,8 @@ class Board {
         return shotsEatPion.length ? shotsEatPion : shots;
     }
 
-    checkForwardMovement(pion, x, y, right){
+    // right permet de vérifier le sens de la diagonale et queen d'interpréter le mouvement comme libre (pas de limite arrière)
+    checkForwardMovement(pion, x, y, right, queen){
         let shotsForPion = [];
         if((x >= 0 && x < this.size) && (y >= 0 && y < this.size)){
             let square = this.searchCase(x, y);
@@ -78,7 +79,7 @@ class Board {
             // sinon on regarde si le pion est ennemi et si la case d'après est libre
             } else {
                 if(square.pion.color != pion.color){
-                    let y1 = pion.color === 'white' ? y - 1 : y + 1;
+                    let y1 = queen ? (pion.color === 'white' ? y + 1 : y - 1) : (pion.color === 'white' ? y - 1 : y + 1); 
                     let x1 = right ? x + 1 : x - 1;
                     if((x1 >= 0 && x1 < this.size) && (y1 >= 0 && y1 < this.size)){
                         let square2 = this.searchCase(x1, y1);
@@ -112,6 +113,29 @@ class Board {
         return shotsForPion;
     }
 
+    checkQueenMovement(pion, x, y, right, backward){
+        // cherche les coups d'une dame
+        let condition = true;
+        let queenShots = []
+        // tant que la condition est respecté on incrémente la diagonale
+        while(condition){
+            // on récupère un mouvement
+            let interMovements = this.checkForwardMovement(pion, x, y, right, backward);
+            // si un mouvement est récupéré c'est qu'on peut jouer dans cette drection
+            if(interMovements.length){
+                queenShots = queenShots.concat(interMovements);
+                condition = interMovements[0].eatedPion != undefined ? false : true;
+            // sinon c'est qu'il n'y a plus rien a jouer sur cette diagonale
+            } else {
+                condition = false;
+            }            
+            // on incrémente la diagonale suivant la couleur et le sens souhaité
+            y = pion.color === 'white' ? (backward ? y + 1 : y - 1) : (backward ? y - 1 : y + 1);
+            x = right ? x + 1 : x - 1;
+        }
+        return queenShots;
+    }
+
     searchSpecificShot(pion){
         let shotsForPion = []
         // si le pion n'est pas une dame
@@ -132,55 +156,25 @@ class Board {
             shotsForPion = forwardLeft.concat(forwardRight, backwardLeft, backwardRight);
         // si le pion est une dame
         } else {
-            let condition = true;
             let y = pion.color === 'white' ? pion.position.y - 1 : pion.position.y + 1;
             let x1 = pion.position.x - 1;
             let x2 = pion.position.x + 1;
 
-            let forwardLeft = [];
-            let forwardRight = [];
-            let backwardLeft = [];
-            let backwardRight = [];
-            // a gauche
-            while(condition){
-                let interForwardLeft = this.checkForwardMovement(pion, x1, y);
-                interForwardLeft.length ? forwardLeft = forwardLeft.concat(interForwardLeft) : condition = false;
-                y = pion.color === 'white' ? y - 1 : y + 1;
-                x1 -= 1;
-            }
-            condition = true;
-            y = pion.color === 'white' ? pion.position.y - 1 : pion.position.y + 1;
-            // a droite
-            while(condition){
-                let interForwardRight = this.checkForwardMovement(pion, x2, y, true);
-                interForwardRight.length ? forwardRight = forwardRight.concat(interForwardRight) : condition = false;
-                y = pion.color === 'white' ? y - 1 : y + 1;
-                x2 += 1;
-            }
-            condition = true;
-            y = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1;
-            x1 = pion.position.x - 1;
-            // a gauche inverse selon couleur
-            while(condition){
-                let interBackwardLeft = this.checkForwardMovement(pion, x1, y);
-                interBackwardLeft.length ? backwardLeft = backwardLeft.concat(interBackwardLeft) : condition = false;
-                y = pion.color === 'white' ? y + 1 : y - 1;
-                x1 -= 1;
-            }
-            condition = true;
-            y = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1;
-            x2 = pion.position.x + 1;
-            // a droite inverse selon couleur
-            while(condition){
-                let interBackwardRight = this.checkForwardMovement(pion, x2, y, true);
-                interBackwardRight.length ? backwardRight = backwardRight.concat(interBackwardRight) : condition = false;
-                y = pion.color === 'white' ? y + 1 : y - 1;
-                x2 += 1;
-            }
-            shotsForPion = forwardLeft.concat(forwardRight, backwardLeft, backwardRight);
+            // regarde les coups disponible a gauche dans le sens de la couleur
+            let forwardLeft = this.checkQueenMovement(pion, x1, y, false, false)
 
+            // regarde les coups disponible a droite dans le sens de la couleur
+            let forwardRight = this.checkQueenMovement(pion, x2, y, true, false)
+
+            // regarde les coups disponible a gauche dans le sens inverse de la couleur
+            y = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1; // inverse le sens
+            let backwardLeft = this.checkQueenMovement(pion, x1, y, false, true)
+
+            // regarde les coups disponible a droite dans le sens inverse de la couleur
+            let backwardRight = this.checkQueenMovement(pion, x2, y, true, true)
+
+            shotsForPion = forwardLeft.concat(forwardRight, backwardLeft, backwardRight);
         }
-        console.log(shotsForPion)
         return shotsForPion;
     }
 
