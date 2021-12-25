@@ -36,10 +36,20 @@ body{
     background-position: center;
 }
 
-.available{
-    background-color: blue !important;
+.available::before{
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.selected{
-    background-color: yellow !important;
+.selected.available::before{
+    width: 15px;
+    height: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
 }
