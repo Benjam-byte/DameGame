@@ -28,5 +28,12 @@
 //     document.getElementById('deviceready').classList.add('ready');
 // }
 window.onload=function()   { 
-    var game = new Party("Jean", "Paul", 10 ); 
+    var game = new Party("Jean", "Paul", 6 );
+
+    restart = () => {
+        // document.getElementById("endGame").classList.add("hidden");
+        // document.getElementById("board").innerHTML = "";
+        // game = new Party("Jean2", "Paul2", 6 )
+        document.location.href="index.html"; 
+    }
 }

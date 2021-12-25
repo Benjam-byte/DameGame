@@ -67,7 +67,7 @@ class Party {
                             this.switchTurn();
                         }
                     } else {
-                        alert("FIN DE PARTIE")
+                        document.getElementById("endGame").classList.remove("hidden");
                     }
                 } else {
                     this.switchTurn();
@@ -101,7 +101,8 @@ class Party {
     // vérifie si le jeu est fini
     endGame(){
         if(!this.board.whitePions.length || !this.board.blackPions.length){
-            this.board.whitePions.length ? alert("BLANC WIN") : alert("BLACK WIN");
+            let endGame = document.querySelector("#endGame>p");
+            endGame.innerHTML = this.board.whitePions.length ? "Joueur blanc gagne" : "Joueur noir gagne";
             return true;
         } else {
             return false;

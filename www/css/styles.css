@@ -53,3 +53,35 @@ body{
     height: 15px;
     background-color: rgba(0, 0, 0, 0.5);
 }
+
+#endGame{
+    background-color: rgba(22, 22, 22, 0.5);
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 50px 0;
+    color: white;
+}
+
+#endGame>p{
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#endGame>button{
+    cursor: pointer;
+    display: block;
+    margin: auto;
+    padding: 15px 30px;
+    border-radius: 5px;
+    border: none;
+    background-color: #fdcb6e;
+    font-weight: bolder;
+}
+
+#endGame.hidden{
+    display: none;
+}

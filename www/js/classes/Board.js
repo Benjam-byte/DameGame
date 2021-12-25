@@ -7,7 +7,6 @@ class Board {
         this.drawBoard();
         this.whitePions = this.createPions('white');
         this.blackPions = this.createPions('black', true);
-        this.whitePions[0].becomesQueen();
     }
 
     // trace les cases du plateau
