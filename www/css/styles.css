@@ -1,0 +1,87 @@
+body{
+    background-color: #EEE;
+}
+
+#board{
+    background-color: red;
+    width: 80vh;
+    height: 80vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid grey;
+}
+
+.case{
+    display: inline-block;
+    position: relative;
+}
+
+.pion{
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: .3s;
+}
+
+.queen{
+    background-image: url("../img/crown.svg");
+    background-size: 65%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.available::before{
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.selected.available::before{
+    width: 15px;
+    height: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#endGame{
+    background-color: rgba(22, 22, 22, 0.5);
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 50px 0;
+    color: white;
+}
+
+#endGame>p{
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#endGame>button{
+    cursor: pointer;
+    display: block;
+    margin: auto;
+    padding: 15px 30px;
+    border-radius: 5px;
+    border: none;
+    background-color: #fdcb6e;
+    font-weight: bolder;
+}
+
+#endGame.hidden{
+    display: none;
+}
