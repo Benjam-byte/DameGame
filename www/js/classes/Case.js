@@ -12,9 +12,10 @@ class Case {
     drawCase() {
         let Case = document.createElement("div");
         this.setAttributes(Case,{"class": "case", "x" : this.position.x, "y" : this.position.y});
-        let dimension = ((80 * window.innerHeight) / 100) / this.parent.size;
-        Case.style.width = dimension + "px";
-        Case.style.height = dimension + "px";
+        // let dimension = ((80 * window.innerHeight) / 100) / this.parent.size;
+        let dimension = 100/this.parent.size;
+        Case.style.width = dimension + "%";
+        Case.style.height = dimension + "%";
         Case.style.backgroundColor = this.color;
         this.parent.ref.appendChild(Case);
         this.ref = Case;

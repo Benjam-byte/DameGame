@@ -28,7 +28,7 @@
 //     document.getElementById('deviceready').classList.add('ready');
 // }
 window.onload=function()   { 
-    var game = new Party("Jean", "Paul", 6 );
+    var game = new Party("Jean", "Paul", 10 );
 
     restart = () => {
         // document.getElementById("endGame").classList.add("hidden");
