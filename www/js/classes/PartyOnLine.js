@@ -1,23 +1,52 @@
 class PartyOnLine {
-    constructor(playerName1, playerName2, size, isFirst, id, ws) {
-        if (isFirst) {
-            this.player = new Player(playerName1, 'white', true);
-            this.playerAd = new Player(playerName2, 'black', false);
-            this.board = new Board(size);
-            this.gameTurn = this.player;
-            this.ws = ws;
-        } else {
-            this.player = new Player(playerName1, 'black', true);
-            this.playerAd = new Player(playerName2, 'white', false);
-            this.board = new Board(size);
-            this.gameTurn = this.player;
-            this.ws = ws;
-        }
-        this.id = id;
-        this.selectedSquare;
-        this.currentShots;
-        this.requiredShots = [];
-        this.pionpos = '';
+    constructor(playerName1, playerName2, size, isFirst, id, ws,board) {
+         if(!board){
+            if (isFirst) {
+                this.player = new Player(playerName1, 'white', true);
+                this.playerAd = new Player(playerName2, 'black', false);
+                this.board = new Board(size,false);
+                this.gameTurn = this.player;
+                this.ws = ws;
+            } else {
+                this.player = new Player(playerName1, 'black', true);
+                this.playerAd = new Player(playerName2, 'white', false);
+                this.board = new Board(size,false);
+                this.gameTurn = this.player;
+                this.ws = ws;
+            }
+            this.id = id;
+            this.selectedSquare;
+            this.currentShots;
+            this.requiredShots = [];
+            this.pionpos = '';
+            this.eatedpionPos = '';
+         }else{
+            if (isFirst) {
+                this.player = new Player(playerName1, 'white', true);
+                this.playerAd = new Player(playerName2, 'black', false);
+                this.board = new Board(size,board);
+                this.gameTurn = this.player;
+                this.ws = ws;
+            } else {
+                this.player = new Player(playerName1, 'black', true);
+                this.playerAd = new Player(playerName2, 'white', false);
+                this.board = new Board(size,board);
+                this.gameTurn = this.player;
+                this.ws = ws;
+            }
+            this.id = id;
+            this.selectedSquare;
+            this.currentShots;
+            this.requiredShots = [];
+            this.pionpos = '';
+            this.eatedpionPos = '';
+         }   
+        
+    }
+
+
+    stop(){
+        this.deleteEvent();
     }
 
 
@@ -47,11 +76,13 @@ class PartyOnLine {
                 } else {
                     this.switchTurn();
                 }
+                this.ws.send(JSON.stringify({ code: 3, id: game.id }));
             } else {
-                document.getElementById("endGame").classList.remove("hidden");
+                //document.getElementById("endGame").classList.remove("hidden");
             }
         } else {
             this.switchTurn();
+            this.ws.send(JSON.stringify({ code: 3, id: game.id }));
         }
     }
 
@@ -60,7 +91,7 @@ class PartyOnLine {
         if (this.playerAd.color === 'black') {
             console.log("il etait black");
             for (var i = 0; i < this.board.blackPions.length; i++) {
-                if (this.board.whitePions[i].position.x === pos.x && this.board.whitePions[i].position.y === pos.y) {
+                if (this.board.blackPions[i].position.x === pos.x && this.board.blackPions[i].position.y === pos.y) {
                     return this.board.blackPions[i];
                 }
             }
@@ -74,7 +105,27 @@ class PartyOnLine {
         }
     }
 
-    x
+    getPionEated(pos) {
+        if (pos !== undefined) {
+            if (this.playerAd.color === 'black') {
+                console.log("il etait black 2");
+                for (var i = 0; i < this.board.whitePions.length; i++) {
+                    if (this.board.whitePions[i].position.x === pos.x && this.board.whitePions[i].position.y === pos.y) {
+                        return this.board.whitePions[i];
+                    }
+                }
+            } else {
+                console.log("il etait white 2");
+                for (var i = 0; i < this.board.blackPions.length; i++) {
+                    if (this.board.blackPions[i].position.x === pos.x && this.board.blackPions[i].position.y === pos.y) {
+                        return this.board.blackPions[i];
+                    }
+                }
+            }
+        }
+    }
+
+
     getCase(pos) {
         for (var i = 0; i < this.board.cases.length; i++) {
             if (this.board.cases[i].position.x === pos.x && this.board.cases[i].position.y === pos.y) {
@@ -85,14 +136,16 @@ class PartyOnLine {
 
     play() {
         console.log("mdrr 1")
-        this.createEvent();
         this.viewDisponibleShot();
+        this.createEvent();
     }
 
 
     deleteEvent() {
         console.log("mdrr");
         this.board.ref.removeEventListener('click', this.clickEvent);
+        this.board.clearViewShots();
+        this.board.clearViewSpecificShot();
     }
 
     //fct event 
@@ -115,8 +168,9 @@ class PartyOnLine {
                     this.selectedSquare = pion.parent;
                     // on regarde parmi les coups disponible ceux correspondant au pion sélectionné
                     this.currentShots.forEach(shot => {
-                        if (shot.pion === pion) { //////////////////////////////////////// reprendre ici 
+                        if (shot.pion === pion) { //////////////////////////////////////// reprendre ici //////////////////////////////////////
                             // on émet un feedback des coups possible sur ce pion
+                            console.log(shot);
                             this.board.viewSpecificShot(shot)
                         }
                     })
@@ -132,7 +186,10 @@ class PartyOnLine {
             let shot = this.searchCurrentShot(destinationSquare);
             console.log(shot);
             console.log(this.pionpos);
-            this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos }));
+            this.eatedpionPos = shot.eatedPion.position;
+            console.log("pnt etex");
+            console.log(this.eatedpionPos);
+            this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos }));
             // on fait bouger le pion sur cette case
             shot.pion.move(destinationSquare);
             // on regarde si le pion devient dame
@@ -157,7 +214,7 @@ class PartyOnLine {
                         this.switchTurn();
                     }
                 } else {
-                    document.getElementById("endGame").classList.remove("hidden");
+                    //document.getElementById("endGame").classList.remove("hidden");
                 }
             } else {
                 this.switchTurn();
@@ -172,8 +229,8 @@ class PartyOnLine {
 
     // trouve les coups disponible pour un joueur
     viewDisponibleShot() {
-        let player = this.gameTurn.color == 'white' ? this.player : this.playerAd;
-        this.currentShots = this.board.viewShots(player.color)
+        let player = this.gameTurn.color == 'white' ? "white" : "black";
+        this.currentShots = this.board.viewShots(player)
     }
 
     searchCurrentShot(square) {
@@ -188,6 +245,7 @@ class PartyOnLine {
 
     // change de tour
     switchTurn() {
+        this.board.clearViewSpecificShot();
         this.deleteEvent();
     }
 
@@ -195,8 +253,6 @@ class PartyOnLine {
     endGame() {
         if (!this.board.whitePions.length || !this.board.blackPions.length) {
             this.ws.send(JSON.stringify({ code: 4, id: this.id, victoire: true }))
-            let endGame = document.querySelector("#endGame>p");
-            endGame.innerHTML = this.board.whitePions.length ? "Joueur blanc gagne" : "Joueur noir gagne";
             return true;
         } else {
             return false;
