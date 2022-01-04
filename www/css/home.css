@@ -1,0 +1,48 @@
+body{
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #F4E7D5;
+    font-family: sans-serif;
+}
+
+main{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#scoreboard{
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    margin-bottom: 20px;
+}
+
+#scoreboard>div:first-child{
+    background-color: #BFA38A;
+}
+
+#scoreboard>div{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 15px;
+}
+
+.item:nth-child(2n + 1){
+    background-color: #FFF1DE;  
+}
+
+button{
+    cursor: pointer;
+    display: block;
+    margin: auto;
+    padding: 15px 30px;
+    border-radius: 5px;
+    border: none;
+    background-color: #fdcb6e;
+    font-weight: bolder;
+}

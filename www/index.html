@@ -7,22 +7,49 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
-        <link rel="stylesheet" href="css/index.css">
-        <link rel="stylesheet" href="css/styles.css">
-        <title>DameGame</title>
-        <script type="text/javascript" src="js/classes/Pion.js"></script>
-        <script type="text/javascript" src="js/classes/Case.js"></script>
-        <script type="text/javascript" src="js/classes/Shot.js"></script>
-        <script type="text/javascript" src="js/classes/Board.js"></script>
-        <script type="text/javascript" src="js/classes/Player.js"></script>
-        <script type="text/javascript" src="js/classes/Party.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/login.js"></script>
+        <link rel="stylesheet" href="css/login.css">
+        <title>DameGame</title>
     </head>
     <body>
-        <div id="board"></div>
-        <div id="endGame" class="hidden">
-            <p>Vaingeur</p>
-            <button onclick="restart()">RESTART</button>
+
+        <div class="Login">
+            <div class="switch-bar">
+                <span onclick="toggleIn()">S'identifier</span>
+                <span onclick="toggleUp()">Créer un compte</span>
+            </div>
+
+            <main>
+                <form>
+                    <h3>S'identifier</h3>
+                    <label for="username">Nom d'utilisateur</label>
+                    <input id="username" placeholder="Ex : Tartempion27" type="text"/>
+                    <label for="password">Mot de passe</label>
+                    <input id="password" type="password"/>
+                    <button class="primary-action" onclick="signIn()">Connexion</button>
+                </form>
+        
+        
+                <form>
+                    <h3>Créer votre compte</h3>
+                    <label for="username">Nom d'utilisateur</label>
+                    <input id="username" placeholder="Ex : Tartempion27"/>
+                    <label for="mail">Mail</label>
+                    <input id="mail" placeholder="Ex : Tartempion@gmail.com"/>
+                    <label for="password">Mot de passe</label>
+                    <input id="password"/>
+                    <label for="password">Confirmation mot de passe</label>
+                    <input id="password"/>
+                    <button class="primary-action" onclick="signUp()">S'inscrire</button>
+                </form>
+                <div class="switch-side right-side">
+                    <div>
+                        <button class="goToSignUp" onclick="goToSignUp()">Créer un compte</button>
+                        <button class="goToSignIn"  onclick="goToSignIn()">Se connecter</button>
+                    </div>
+                </div>
+            </main>
         </div>
     </body>
 </html>
