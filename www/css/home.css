@@ -20,10 +20,24 @@ main{
 #scoreboard{
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     margin-bottom: 20px;
+    overflow-y: scroll;
+    height: 55vh;
+    scrollbar-width: none;
 }
 
+#scoreboard::-webkit-scrollbar {
+    display: none;
+    }
+
 #scoreboard>div:first-child{
+    width: -webkit-fill-available;
+    position: fixed;
+    top: -1px;
     background-color: #BFA38A;
+}
+
+#scoreboard>div:nth-child(2){
+    margin-top: 48px;
 }
 
 #scoreboard>div{

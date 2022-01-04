@@ -21,7 +21,7 @@ main{
 }
         
 
-form{
+.form{
     transition: .5s;
     transition-timing-function: ease-in-out;
     display: flex;
@@ -33,11 +33,11 @@ form{
     min-width: 300px;
 }
 
-form:nth-child(2){
+.form:nth-child(2){
     opacity: 0;
 }
 
-form>h3{
+.form>h3{
     font-size: 24px;
     color: black;
     text-align: center;
@@ -45,13 +45,13 @@ form>h3{
     margin-bottom: 32px;
 }            
 
-form>label{
+.form>label{
     font-size: 14px;
     color: black;
     margin-bottom: 8px;
 }
 
-form>input{
+.form>input{
     height: 40px;
     background-color: #F4E7D5;
     border: none;
@@ -62,7 +62,7 @@ form>input{
     color: white;
 }
 
-form>.primary-action{
+.form>.primary-action{
     background-color: #fdcb6e;
     height: 40px;
     text-align: center;
@@ -134,11 +134,11 @@ form>.primary-action{
         text-decoration: underline;
     }
 
-    form{
+    .form{
         opacity: 1 !important;
     }
 
-    form:nth-child(2){
+    .form:nth-child(2){
         display: none;
     }
 }

@@ -4,7 +4,7 @@ window.onload=function()   {
     const switchDiv = document.getElementsByClassName("switch-side");
     const buttonGoToSignUp = document.getElementsByClassName("goToSignUp");
     const buttonGoToSignIn = document.getElementsByClassName("goToSignIn");
-    const forms = document.getElementsByTagName("form");
+    const forms = document.getElementsByClassName("form");
     const spans = document.querySelectorAll(".switch-bar>span")
 
     // animations gauche
