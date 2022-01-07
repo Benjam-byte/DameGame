@@ -1,17 +1,21 @@
 body{
+    margin : 0;
+}
+
+.logHidden{
     margin: 0;
     overflow: hidden;
     height: 100vh;
     background-color: #F4E7D5;
     font-family: sans-serif;
-}
+}   
 
-.Login{
+.logHidden .Login{
     height: 100%;
     width: 100%;
 }
 
-main{
+.logHidden main{
     position: relative;
     display: flex;
     justify-content: space-around;
@@ -21,7 +25,7 @@ main{
 }
         
 
-.form{
+.logHidden .form{
     transition: .5s;
     transition-timing-function: ease-in-out;
     display: flex;
@@ -33,11 +37,11 @@ main{
     min-width: 300px;
 }
 
-.form:nth-child(2){
+.logHidden .form:nth-child(2){
     opacity: 0;
 }
 
-.form>h3{
+.logHidden .form>h3{
     font-size: 24px;
     color: black;
     text-align: center;
@@ -45,13 +49,13 @@ main{
     margin-bottom: 32px;
 }            
 
-.form>label{
+.logHidden .form>label{
     font-size: 14px;
     color: black;
     margin-bottom: 8px;
 }
 
-.form>input{
+.logHidden .form>input{
     height: 40px;
     background-color: #F4E7D5;
     border: none;
@@ -62,7 +66,7 @@ main{
     color: white;
 }
 
-.form>.primary-action{
+.logHidden .form>.primary-action{
     background-color: #fdcb6e;
     height: 40px;
     text-align: center;
@@ -74,7 +78,7 @@ main{
 }
         
 
-.switch-side{
+.logHidden .switch-side{
     background-image: url("../img/dameGame.jpg");
     transform: translate(50%);
     position: absolute;
@@ -90,14 +94,14 @@ main{
     align-items: center;
 }
 
-.switch-side>div{
+.logHidden .switch-side>div{
     height: fit-content;
 }
-.switch-side>div>.goToSignIn{
+.logHidden .switch-side>div>.goToSignIn{
     display: none;
 }
 
-.switch-side>div>button{
+.logHidden .switch-side>div>button{
     background-color: transparent;
     padding: 10px;
     border: 1px solid black;
@@ -109,20 +113,20 @@ main{
     font-size: 16px;
 }
 
-.switch-side>div>img{
+.logHidden .switch-side>div>img{
     margin-bottom: 64px;
 }
 
-.switch-bar{
+.logHidden .switch-bar{
     display: none;
 }
 
 @media screen and (max-width:1024px) {
-    .switch-side{
+    .logHidden .switch-side{
         display: none;
     }
 
-    .switch-bar{
+    .logHidden .switch-bar{
         font-size: 20px;
         margin: 20px;
         width: 100%;
@@ -130,15 +134,15 @@ main{
         justify-content: space-around;
     }
 
-    .switch-bar>span:first-child{
+    .logHidden .switch-bar>span:first-child{
         text-decoration: underline;
     }
 
-    .form{
+    .logHidden .form{
         opacity: 1 !important;
     }
 
-    .form:nth-child(2){
+    .logHidden .form:nth-child(2){
         display: none;
     }
 }

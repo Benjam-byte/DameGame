@@ -1,12 +1,17 @@
 body{
+    margin:0;
+}
+
+.homeHidden{
     position: relative;
     height: 100vh;
     overflow: hidden;
     background-color: #F4E7D5;
     font-family: sans-serif;
+    display: none;
 }
 
-main{
+.homeHidden main{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -17,40 +22,41 @@ main{
     justify-content: center;
 }
 
-#scoreboard{
+.homeHidden .scoreboard{
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     margin-bottom: 20px;
     overflow-y: scroll;
-    height: 55vh;
+    max-height: 55vh;
     scrollbar-width: none;
 }
 
-#scoreboard::-webkit-scrollbar {
+.homeHidden .scoreboard::-webkit-scrollbar {
     display: none;
     }
 
-#scoreboard>div:first-child{
+    .homeHidden .scoreboard>div:first-child{
     width: -webkit-fill-available;
+    width: -moz-available;
     position: fixed;
     top: -1px;
     background-color: #BFA38A;
 }
 
-#scoreboard>div:nth-child(2){
+.homeHidden .scoreboard>div:nth-child(2){
     margin-top: 48px;
 }
 
-#scoreboard>div{
+.homeHidden .scoreboard>div{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     padding: 15px;
 }
 
-.item:nth-child(2n + 1){
+.homeHidden .item:nth-child(2n + 1){
     background-color: #FFF1DE;  
 }
 
-button{
+.homeHidden button{
     cursor: pointer;
     display: block;
     margin: auto;
@@ -59,4 +65,13 @@ button{
     border: none;
     background-color: #fdcb6e;
     font-weight: bolder;
+}
+
+
+.homeHidden span{
+    font-size: medium;
+}
+
+#home2Vue{
+    display: none;
 }

@@ -41,9 +41,4 @@ window.onload=function()   {
         spans[1].style.textDecoration = "underline";
     }
 
-    signIn = () => {
-        let origin = window.location.origin;
-        let newPath = origin + '/www/home.html';
-        document.location.href = newPath; 
-    }
 }

@@ -1,32 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-// Wait for the deviceready event before using any of Cordova's device APIs.
-// See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-// document.addEventListener('deviceready', onDeviceReady, false);
-
-// function onDeviceReady() {
-//     // Cordova is now initialized. Have fun!
-
-//     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-//     document.getElementById('deviceready').classList.add('ready');
-// }
 
 /** 
  * code 0 : donne ton nom
@@ -36,11 +7,34 @@
  * code 4 : victoire/defaite
  */
 
+
 const onlinemode = true;
 game = "";
-const nameJ = "jean";
+nameJ = ""
+passJ = ""
+
+
 
 if (onlinemode) {
+
+    retryConnection = () => {
+        window.document.getElementById("wrongPass").classList.add("hidden");
+    }
+
+    play = () => {
+        window.document.getElementById("homeVue").style.display = "none";
+        window.document.getElementById("board").classList.remove("hidden");
+        var ans = JSON.stringify({ code: 0.3, myName: nameJ });
+        ws.send(ans);
+    }
+
+    signIn = () => {
+        console.log("je m'inscrit");
+        nameJ = window.document.getElementById("username").value;
+        passJ = window.document.getElementById("password").value;
+        var ans = JSON.stringify({ code: 0, myName: nameJ, password: passJ });
+        ws.send(ans);
+    }
 
     restart = () => { // ne fonctionne pas car place directement avant qu'il est rappuyer sur rejouer le deuxieme joueur en partie et donc fais n'importe quoi mdrrr il vas falloir rajouter un code
         document.getElementById("endGame").classList.add("hidden");
@@ -48,6 +42,14 @@ if (onlinemode) {
         while (myNode.firstChild) {
             myNode.removeChild(myNode.lastChild);
         }
+        window.document.getElementById("board").classList.add("hidden");
+        window.document.getElementById("home2Vue").style.display = "block";
+
+    }
+
+    playAgain = () => {
+        window.document.getElementById("home2Vue").style.display = "none";
+        window.document.getElementById("board").classList.remove("hidden");
         ws.send(JSON.stringify({ code: 0.5 }));
     }
 
@@ -57,9 +59,8 @@ if (onlinemode) {
         while (myNode.firstChild) {
             myNode.removeChild(myNode.lastChild);
         }
-        ws.send(JSON.stringify({ code: 6,id : game.id  }));
+        ws.send(JSON.stringify({ code: 6, id: game.id }));
     }
-
     const ws = new WebSocket('ws://127.0.1:9898/'); //on ouvre la connexion 
 
     ws.onopen = function () {
@@ -78,7 +79,6 @@ if (onlinemode) {
 } else {
     window.onload = function () {
         var game = new Party("Jean", "Paul", 10);
-        game.board.getVizBoard();
 
         restart = () => {
             document.location.href = "index.html";
@@ -86,58 +86,116 @@ if (onlinemode) {
     }
 }
 
+
+function undrawLeaderBoard() {
+    var myNode = document.getElementById("board");
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.lastChild);
+    }
+}
+
+function drawLeaderBoard(tab) {
+    var ld = window.document.getElementsByClassName("scoreboard");
+    console.log(tab);
+    for (var j = 0; j < ld.length; j++) {
+        var divI = document.createElement("div");
+        var spanI1 = document.createElement('span');
+        spanI1.innerHTML = "pseudo";
+        var spanI2 = document.createElement('span');
+        spanI2.innerHTML = "score";
+        divI.appendChild(spanI1);
+        divI.appendChild(spanI2);
+        ld[j].appendChild(divI);
+        for (var i = 0; i < tab.length; i++) {
+            var div = document.createElement("div");
+            div.classList.add("item");
+            var span = document.createElement('span');
+            console.log(tab[i].login);
+            span.innerHTML = tab[i].login;
+            var span2 = document.createElement("span");
+            span2.innerHTML = tab[i].nbPartiesGagnees;
+            div.appendChild(span);
+            div.appendChild(span2);
+            ld[j].appendChild(div);
+        }
+    }
+}
+
+
 function findCode(message, ws) {
     if (message.code === 0) {
         console.log("reception code 0");
-        var ans = JSON.stringify({ code: 0, myName: nameJ });
-        ws.send(ans);
-    } else if (message.code === 1) {
+        drawLeaderBoard(message.leaderscore);
+    } else if (message.code === 0.1) {
+        console.log('reception code 0.1')
+        if (message.value) {
+            console.log("je continue le compte est ok");
+            window.document.getElementById("logVue").style.display = "none";
+            window.document.getElementById("homeVue").style.display = "block";
+        } else {
+            console.log("je continue pas le code est pas ok");
+            window.document.getElementById("wrongPass").classList.remove("hidden");
+        }
+    } else if (message.code === 0.2) {
+        game = new Party("Vous", "Enemi", 10);
+    }
+    else if (message.code === 1) {
         console.log("reception code 1");
-        window.game = new PartyOnLine(message.name, message.nameAd, message.size, message.isFirst, message.id, ws,false);
-        var ans = JSON.stringify({ code: 1, id: window.game.id, ready: true });
+        var myNode = document.getElementById("board");
+        while (myNode.firstChild) {
+            myNode.removeChild(myNode.lastChild);
+        }
+        var el = document.getElementById('board'),
+            elClone = el.cloneNode(true);
+        el.parentNode.replaceChild(elClone, el);
+
+        game = new PartyOnLine(message.name, message.nameAd, message.size, message.isFirst, message.id, ws, false);
+        var ans = JSON.stringify({ code: 1, id: game.id, ready: true });
         ws.send(ans);
+        console.log(game);
     } else if (message.code === 2) {
         console.log("reception code 2");
-        window.game.play();
+        game.play();
     } else if (message.code === 3) {
         console.log("reception code 3");
         var e = cycle.retrocycle(message.shot);
         console.log(message.pionpos);
         console.log(message.eatedpionPos);
         var msg = new Shot(game.getPion(message.pionpos), game.getCase(e.destination.position), game.getPionEated(message.eatedpionPos), e.queen);
-        window.game.playAShot(
+        game.playAShot(
             msg
         );
     } else if (message.code === 5) {
         console.log("reception code 5");
         document.getElementById("endGame").classList.remove("hidden");
         let endGame = document.querySelector("#endGame>p");
-        var nameVic = '';
-        if (game.player.color === "white" && game.board.whitePions.length) {
-            nameVic = game.player.name
-        } else if (game.player.color === "white" && game.board.blackPions.length) {
-            nameVic = game.playerAd.name
-        } else if (game.player.color === "black" && game.board.blackPions.length) {
-            nameVic = game.playerAd.name
+        if (message.victoire) {
+            endGame.innerHTML = "Vous avez gagné";
         } else {
-            nameVic = game.player.name
+            endGame.innerHTML = "Vous avez perdu";
         }
-        endGame.innerHTML = nameVic + " à gagné";
-    }else if(message.code === 5.5){
+        var el = document.getElementById('board'),
+            elClone = el.cloneNode(true);
+        el.parentNode.replaceChild(elClone, el);
+        undrawLeaderBoard();
+        drawLeaderBoard(message.leaderscore);
+
+    } else if (message.code === 5.5) {
         console.log("reception code 5.5");
         document.getElementById("endGame").classList.remove("hidden");
         let endGame = document.querySelector("#endGame>p");
         endGame.innerHTML = "Vous avez gagné";
-    }else if(message.code === 6){
+    } else if (message.code === 6) {
         console.log("reception code 6");
         document.getElementById("pauseGame").classList.remove("hidden");
         game.stop();
-    }else if(message.code === 7){
-        var ans = JSON.stringify({code : 7, id: game.id, boardCase : game.board.getVizBoard()});
-        ws.send(ans);
-    }else if(message.code === 8){
-        window.game = new PartyOnLine(message.name, message.nameAd, message.size, message.isFirst, message.id, ws,message.boardCase);
-        ws.send(JSON.stringify({code :8, id:game.id}));
+    } else if (message.code === 7) {
+        console.log("reception code 7");
+        document.getElementById("pauseGame").classList.add("hidden");
+    } else if (message.code === 8) {
+        console.log("reception code 8");
+        game = new PartyOnLine(message.name, message.nameAd, message.size, message.isFirst, message.id, ws, message.boardCase);
+        ws.send(JSON.stringify({ code: 8, id: game.id }));
     }
 }
 

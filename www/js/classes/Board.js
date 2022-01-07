@@ -12,44 +12,95 @@ class Board {
             this.cases = [];
             this.ref = window.document.getElementById("board");
             this.size = size; // nombre de case
-
+            this.whitePions = [];
+            this.blackPions = [];
             this.drawBoard();
             this.drawBoardFrombViz(board);
         }
 
     }
 
-
+    /** 0 pas de pion
+     * 1 pion blanc
+     * 2 pion noir
+     * 3 dame blanche
+     * 4 dame noir
+     *      */
     getVizBoard() {
         var bViz = [];
         for (var i = 0; i < this.cases.length; i++) {
             if (this.cases[i].pion === undefined) {
                 bViz.push(0); // 0 si pas de pion
-            } else if (this.cases[i].pion.color === "white") {
+            } else if (this.cases[i].pion.color === "white" && !this.cases[i].pion.isQueen) {
                 bViz.push(1); // 1 si le pion est blanc
-            } else if (this.cases[i].pion.color === "black") {
-                bViz.push(2);
+            }else if(this.cases[i].pion.color === "white" && this.cases[i].pion.isQueen){
+                bViz.push(3); // 3 si le pion est une dame blanche
+            } else if (this.cases[i].pion.color === "black" && !this.cases[i].pion.isQueen) {
+                bViz.push(2); // 2 si le pîon est noir
+            }else if(this.cases[i].pion.color === "black" && !this.cases[i].pion.isQueen) {
+                bViz.push(4); //4 si le pion est une dame noir
             }
         }
+        return bViz;
     }
 
 
     drawBoardFrombViz(bViz) {
+        console.log(bViz);
+        console.log("je rentre dans la boucle");
         for (var i = 0; i < bViz.length; i++) {
+            console.log(bViz[i]);
             if (bViz[i] === 0) {
             } else if (bViz[i] === 1) {
                 var x = i % 10;
-                var y = i / 10;
+                var y = Math.floor(i / 10);
+                console.log("on regarde la case :");
+                console.log(x);
+                console.log(y);
                 let square = this.searchCase(x, y);
+                console.log("le resultat :")
+                console.log(square);
                 let pion = new Pion({ "x": x, "y": y }, "white", square);
                 square.pion = pion;
                 this.whitePions.push(pion);
             } else if (bViz[i] === 2) {
                 var x = i % 10;
-                var y = i / 10;
+                var y = Math.floor(i / 10);
+                console.log("on regarde la case :");
+                console.log(x);
+                console.log(y);
                 let square = this.searchCase(x, y);
+                console.log("le resultat :")
+                console.log(square);
                 let pion = new Pion({ "x": x, "y": y }, "black", square);
                 square.pion = pion;
+                this.blackPions.push(pion);
+            }else if(bViz[i] === 3){
+                var x = i % 10;
+                var y = Math.floor(i / 10);
+                console.log("on regarde la case :");
+                console.log(x);
+                console.log(y);
+                let square = this.searchCase(x, y);
+                console.log("le resultat :")
+                console.log(square);
+                let pion = new Pion({ "x": x, "y": y }, "white", square);
+                square.pion = pion;
+                pion.becomesQueen();
+                this.whitePions.push(pion);
+
+            }else if(bViz[i] === 4){
+                var x = i % 10;
+                var y = Math.floor(i / 10);
+                console.log("on regarde la case :");
+                console.log(x);
+                console.log(y);
+                let square = this.searchCase(x, y);
+                console.log("le resultat :")
+                console.log(square);
+                let pion = new Pion({ "x": x, "y": y }, "black", square);
+                square.pion = pion;
+                pion.becomesQueen();
                 this.blackPions.push(pion);
             }
         }

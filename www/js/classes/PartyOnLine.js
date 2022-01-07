@@ -1,6 +1,7 @@
 class PartyOnLine {
     constructor(playerName1, playerName2, size, isFirst, id, ws,board) {
          if(!board){
+             console.log("new party");
             if (isFirst) {
                 this.player = new Player(playerName1, 'white', true);
                 this.playerAd = new Player(playerName2, 'black', false);
@@ -15,12 +16,13 @@ class PartyOnLine {
                 this.ws = ws;
             }
             this.id = id;
-            this.selectedSquare;
-            this.currentShots;
+            this.selectedSquare = [];
+            this.currentShots = [];
             this.requiredShots = [];
             this.pionpos = '';
             this.eatedpionPos = '';
          }else{
+             console.log("new party");
             if (isFirst) {
                 this.player = new Player(playerName1, 'white', true);
                 this.playerAd = new Player(playerName2, 'black', false);
@@ -35,8 +37,8 @@ class PartyOnLine {
                 this.ws = ws;
             }
             this.id = id;
-            this.selectedSquare;
-            this.currentShots;
+            this.selectedSquare =[];
+            this.currentShots = [];
             this.requiredShots = [];
             this.pionpos = '';
             this.eatedpionPos = '';
@@ -51,7 +53,6 @@ class PartyOnLine {
 
 
     playAShot(shotAd) {
-        console.log(shotAd);
         let shot = shotAd;
         // on fait bouger le pion sur cette case
         shot.pion.move(shot.destination);
@@ -63,7 +64,7 @@ class PartyOnLine {
         if (shot.eatedPion) {
             shot.eatedPion.delete();
             this.requiredShots = [];
-            if (!this.endGame()) {
+            if (!this.endGame(false)) {
                 this.board.searchSpecificShot(shot.pion).forEach(element => {
                     if (element.eatedPion) {
                         this.requiredShots.push(element);
@@ -78,7 +79,7 @@ class PartyOnLine {
                 }
                 this.ws.send(JSON.stringify({ code: 3, id: game.id }));
             } else {
-                //document.getElementById("endGame").classList.remove("hidden");
+                
             }
         } else {
             this.switchTurn();
@@ -87,16 +88,13 @@ class PartyOnLine {
     }
 
     getPion(pos) {
-        console.log(pos);
         if (this.playerAd.color === 'black') {
-            console.log("il etait black");
             for (var i = 0; i < this.board.blackPions.length; i++) {
                 if (this.board.blackPions[i].position.x === pos.x && this.board.blackPions[i].position.y === pos.y) {
                     return this.board.blackPions[i];
                 }
             }
         } else {
-            console.log("il etait white");
             for (var i = 0; i < this.board.whitePions.length; i++) {
                 if (this.board.whitePions[i].position.x === pos.x && this.board.whitePions[i].position.y === pos.y) {
                     return this.board.whitePions[i];
@@ -108,14 +106,12 @@ class PartyOnLine {
     getPionEated(pos) {
         if (pos !== undefined) {
             if (this.playerAd.color === 'black') {
-                console.log("il etait black 2");
                 for (var i = 0; i < this.board.whitePions.length; i++) {
                     if (this.board.whitePions[i].position.x === pos.x && this.board.whitePions[i].position.y === pos.y) {
                         return this.board.whitePions[i];
                     }
                 }
             } else {
-                console.log("il etait white 2");
                 for (var i = 0; i < this.board.blackPions.length; i++) {
                     if (this.board.blackPions[i].position.x === pos.x && this.board.blackPions[i].position.y === pos.y) {
                         return this.board.blackPions[i];
@@ -135,14 +131,14 @@ class PartyOnLine {
     }
 
     play() {
-        console.log("mdrr 1")
+        console.log("je joue")
         this.viewDisponibleShot();
         this.createEvent();
     }
 
 
     deleteEvent() {
-        console.log("mdrr");
+        console.log("je delete l'event");
         this.board.ref.removeEventListener('click', this.clickEvent);
         this.board.clearViewShots();
         this.board.clearViewSpecificShot();
@@ -158,19 +154,16 @@ class PartyOnLine {
             // on supprime le feedback des coups si il y'en avait
             this.board.clearViewSpecificShot();
             // on récupère les pions du joueur
-            console.log(this.gameTurn.color);
             let pions = this.gameTurn.color === "white" ? this.board.whitePions : this.board.blackPions;
             // on regarde quel pion a été sélectionné
             pions.forEach(pion => {
                 if (pion.ref === event.target) {
                     this.pionpos = pion.position;
-                    console.log(pion.position);
                     this.selectedSquare = pion.parent;
                     // on regarde parmi les coups disponible ceux correspondant au pion sélectionné
                     this.currentShots.forEach(shot => {
                         if (shot.pion === pion) { //////////////////////////////////////// reprendre ici //////////////////////////////////////
                             // on émet un feedback des coups possible sur ce pion
-                            console.log(shot);
                             this.board.viewSpecificShot(shot)
                         }
                     })
@@ -182,14 +175,14 @@ class PartyOnLine {
             this.board.clearViewSpecificShot();
             // on cherche la case de destination
             let destinationSquare = this.board.searchCase(parseInt(event.target.getAttribute("x")), parseInt(event.target.getAttribute("y")));
+            console.log('destination square :');
+            console.log(destinationSquare);
             // on cherche le coup des coups courant
             let shot = this.searchCurrentShot(destinationSquare);
+            console.log("le shot proposé :");
             console.log(shot);
-            console.log(this.pionpos);
             this.eatedpionPos = shot.eatedPion.position;
-            console.log("pnt etex");
-            console.log(this.eatedpionPos);
-            this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos }));
+            //this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos, board : this.board.getVizBoard() }));
             // on fait bouger le pion sur cette case
             shot.pion.move(destinationSquare);
             // on regarde si le pion devient dame
@@ -200,7 +193,7 @@ class PartyOnLine {
             if (shot.eatedPion) {
                 shot.eatedPion.delete();
                 this.requiredShots = [];
-                if (!this.endGame()) {
+                if (!this.endGame(true)) {
                     this.board.searchSpecificShot(shot.pion).forEach(element => {
                         if (element.eatedPion) {
                             this.requiredShots.push(element);
@@ -209,15 +202,18 @@ class PartyOnLine {
                     // si c'est le cas on attend qu'il joue
                     if (this.requiredShots.length) {
                         this.viewDisponibleShot();
+                        this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos, board : this.board.getVizBoard() }));
                         // sinon on passe le tour normalement
                     } else {
                         this.switchTurn();
+                        this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos, board : this.board.getVizBoard() }));
                     }
                 } else {
-                    //document.getElementById("endGame").classList.remove("hidden");
+                    this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos, board : this.board.getVizBoard() }));
                 }
             } else {
                 this.switchTurn();
+                this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos, board : this.board.getVizBoard() }));
             }
         }
     })
@@ -229,17 +225,28 @@ class PartyOnLine {
 
     // trouve les coups disponible pour un joueur
     viewDisponibleShot() {
+        console.log("view dispo shot pour la couleur : ");
         let player = this.gameTurn.color == 'white' ? "white" : "black";
-        this.currentShots = this.board.viewShots(player)
+        console.log(player);
+        this.currentShots = this.board.viewShots(player);
+        console.log(this.currentShots);
     }
 
     searchCurrentShot(square) {
         let currentShot;
+        console.log("le probleme semble venir de currentShots :");
+        console.log(this.currentShots);
+        console.log("je parcours la liste de shot disponible ");
         this.currentShots.forEach(shot => {
+            console.log(shot);
             if (shot.destination === square && this.selectedSquare.pion === shot.pion) {
                 currentShot = shot;
+                console.log("jai trouvé une correspondance de shot");
+                console.log("le shot en question :");
+                console.log(currentShot);
             }
         })
+        console.log("fin du parcours");
         return currentShot;
     }
 
@@ -250,9 +257,13 @@ class PartyOnLine {
     }
 
     // vérifie si le jeu est fini
-    endGame() {
+    endGame(boolean) {
         if (!this.board.whitePions.length || !this.board.blackPions.length) {
-            this.ws.send(JSON.stringify({ code: 4, id: this.id, victoire: true }))
+            console.log("emission code 4");
+            this.ws.send(JSON.stringify({ code: 4, id: this.id, victoire: boolean }))
+            this.board.clearViewSpecificShot();
+            this.board.clearViewShots();
+            this.deleteEvent();
             return true;
         } else {
             return false;
