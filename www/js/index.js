@@ -31,7 +31,6 @@ if (onlinemode) {
      * essaye de se connecter en récuperant les valeurs des inputs
      */
     signIn = () => {
-        console.log("je m'inscrit");
         nameJ = window.document.getElementById("username").value;
         passJ = window.document.getElementById("password").value;
         var ans = JSON.stringify({ code: 0, myName: nameJ, password: passJ });
@@ -135,7 +134,6 @@ function drawLeaderBoard(tab) {
             var div = document.createElement("div");
             div.classList.add("item");
             var span = document.createElement('span');
-            console.log(tab[i].login);
             span.innerHTML = tab[i].login;
             var span2 = document.createElement("span");
             span2.innerHTML = tab[i].nbPartiesGagnees;
@@ -146,7 +144,10 @@ function drawLeaderBoard(tab) {
     }
 }
 
-
+/** 
+ * params message : JSON {} , ws : Websocket
+ * Fonction principale de traitement des messages
+ */
 function findCode(message, ws) {
     if (message.code === 0) {
         console.log("reception code 0");
@@ -154,11 +155,9 @@ function findCode(message, ws) {
     } else if (message.code === 0.1) {
         console.log('reception code 0.1')
         if (message.value) {
-            console.log("je continue le compte est ok");
             window.document.getElementById("logVue").style.display = "none";
             window.document.getElementById("homeVue").style.display = "block";
         } else {
-            console.log("je continue pas le code est pas ok");
             window.document.getElementById("wrongPass").classList.remove("hidden");
         }
     } else if (message.code === 0.2) {
@@ -177,15 +176,12 @@ function findCode(message, ws) {
         game = new PartyOnLine(message.name, message.nameAd, message.size, message.isFirst, message.id, ws, false);
         var ans = JSON.stringify({ code: 1, id: game.id, ready: true });
         ws.send(ans);
-        console.log(game);
     } else if (message.code === 2) {
         console.log("reception code 2");
         game.play();
     } else if (message.code === 3) {
         console.log("reception code 3");
         var e = cycle.retrocycle(message.shot);
-        console.log(message.pionpos);
-        console.log(message.eatedpionPos);
         var msg = new Shot(game.getPion(message.pionpos), game.getCase(e.destination.position), game.getPionEated(message.eatedpionPos), e.queen);
         game.playAShot(
             msg

@@ -349,6 +349,10 @@ wsServer.on('request', function (request) {
         });
     }
 
+    /** 
+     * En cas de reception d'un message depuis un client
+     * On traite le message avec la fonction findcode
+     */
     connection.on('message', function (message) {
         var message = JSON.parse(message.utf8Data);
         findCode(message, connection);
@@ -356,6 +360,10 @@ wsServer.on('request', function (request) {
 
     });
 
+    /** 
+     * En cas de fermeture d'une connection 
+     * On verifie ou se trouvais cette connection pour la retirer correctement
+     */
     connection.on('close', function (reasonCode, description) {
         var p = findPartyFromConnection(connection);
         console.log("Une connexion de perdu");
@@ -389,6 +397,11 @@ wsServer.on('request', function (request) {
 
 });
 
+/** 
+ * params message : JSON {} , connection : socket {}
+ * Fonction principale de traitement des messages 
+ * 
+ */
 function findCode(message, connection) { 
     if (message.code === 0) {
         console.log("Réception code 0");
@@ -580,9 +593,13 @@ function findCode(message, connection) {
     }
 }
 
+/** 
+ * Fonction de création de partie
+ * Ou de mis en attente du joueur
+ */
 function startGame() {
     if (clientsDispo.length === 2) { // s'il y a deux clients dispos on crée une partie et on les retire
-        var p = new Partie(clientsDispo[0], clientsDispo[1], lastId); /// à chaque connexion il crée potentiellement une partie ? mais ça se trouve il n'y en a plus
+        var p = new Partie(clientsDispo[0], clientsDispo[1], lastId); /// à chaque connexion il crée potentiellement une partie 
         lastId = lastId + 1;
         partieEncours.push(p);
         clientsDispo = clientsDispo.slice(2);
@@ -590,13 +607,17 @@ function startGame() {
         p.start();
         updateEstEnPartie(p.joueur1.name);
         updateEstEnPartie(p.joueur2.name);
-        ajouterUneNouvellePartie(p.joueur1.name, p.joueur2.name, [], p.joueur2.name); /// gérer en cas de coupure 
+        ajouterUneNouvellePartie(p.joueur1.name, p.joueur2.name, [], p.joueur2.name); 
     }else{
         clientsDispo[0].connection.send(JSON.stringify({code : 0.2}));
     }
 }
 
-
+/** 
+ * 
+ * param partie : Partie
+ * retire de partieEnCours la partie passé en parametre et replace les joueurs dans la file d'attente
+ */
 function removePartie(partie) {
     for (var i = 0; i < partieEncours.length; i++) {
         if (partieEncours[i].id === partie.id) {
@@ -614,6 +635,10 @@ function removePartie(partie) {
     clientsEnAttente.push(partie.joueur2);
 }
 
+/** 
+ * params partie : Partie , connection  : socket
+ * retire la partie passé en parametre et envoie au joueur qui etais rester les instructions pour se reconnecter
+ */
 function removePartiePaused(partie, connection) {
     for (var i = 0; i < partieEncours.length; i++) {
         if (partieEncours[i].id === partie.id) {
@@ -629,6 +654,10 @@ function removePartiePaused(partie, connection) {
     }
 }
 
+/** 
+ * param id : number
+ * Trouve une partie en cours selon son id
+ */
 function findParty(id) {
     for (var i = 0; i < partieEncours.length; i++) {
         if (partieEncours[i].id === id) {
@@ -637,6 +666,10 @@ function findParty(id) {
     }
 }
 
+/** 
+ * param login : string
+ * Trouve une partie selon un login
+ */
 function findPartyByLogin(login) {
     console.log(login);
     console.log(partieEncours);
@@ -650,6 +683,11 @@ function findPartyByLogin(login) {
     return false;
 }
 
+
+/** 
+ * param connection : socket
+ * Trouve une partie en cours selon le socket en parametre
+ */
 function findPartyFromConnection(connection) {
     for (var i = 0; i < partieEncours.length; i++) {
         if (partieEncours[i].joueur1.connection === connection || partieEncours[i].joueur2.connection === connection) {
@@ -659,7 +697,11 @@ function findPartyFromConnection(connection) {
     return false;
 }
 
-
+/** 
+ * param connection :socket
+ * Trouve un client disponible selon le socket en parametre
+ * 
+ */
 function findClientsDispoFromConnection(connection) {
     for (var i = 0; i < clientsDispo.length; i++) {
         if (clientsDispo[i].connection === connection) {
@@ -669,6 +711,11 @@ function findClientsDispoFromConnection(connection) {
     return false;
 }
 
+/** 
+ * param connection : socket
+ * Trouve un client unknown selon le socket en parametre
+ * 
+ */
 function findUnknownFromConnection(connection) {
     for (var i = 0; i < clientsUnknown.length; i++) {
         if (clientsUnknown[i] === connection) {
@@ -678,6 +725,10 @@ function findUnknownFromConnection(connection) {
     return false;
 }
 
+/** 
+ * param connection  : socket
+ * Trouve un client en attente selon le socket en parametre
+ */
 function findClientsEnAttenteFromConnection(connection) {
     for (var i = 0; i < clientsEnAttente.length; i++) {
         if (clientsEnAttente[i].connection === connection) {
@@ -687,7 +738,10 @@ function findClientsEnAttenteFromConnection(connection) {
     return false;
 }
 
-
+/** 
+ * params name : string , connection  : socket
+ * Créer un nouveau client à partir des informations en parametre et le place dans clientsDispo
+ */
 function setName(name, connection) {
     clientsUnknown.forEach(client => {
         if (connection === client) {
@@ -713,6 +767,9 @@ class Partie {
         this.etat = "noStart"; /** noStart Started Paused End  */
     }
 
+    /** 
+     * Annonce au client que la partie demarre
+     */
     start() {
         var mj1 = { code: 1, name: this.joueur1.name, nameAd: this.joueur2.name, size: this.size, isFirst: true, id: this.id };
         var mj2 = { code: 1, name: this.joueur2.name, nameAd: this.joueur1.name, size: this.size, isFirst: false, id: this.id };
