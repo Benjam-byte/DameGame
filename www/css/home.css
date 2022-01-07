@@ -26,6 +26,7 @@ body{
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     margin-bottom: 20px;
     overflow-y: scroll;
+    height: 48px;
     max-height: 55vh;
     scrollbar-width: none;
 }
