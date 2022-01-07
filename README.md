@@ -9,6 +9,6 @@
 - cordova run browser dans les 2 cmd nouvellement ouvert
 
 ## Pour avoir accès à la BD
-soit avoir MongoDB Compass et se connecter à l'adresse suivante : mongodb://localhost:27017/dameGame
-soit lancer un cmd, LaunchCordova.bat, mongo, use dameGame, show collections, db.joueurs.find() et db.parties.find()
+1. soit avoir MongoDB Compass et se connecter à l'adresse suivante : mongodb://localhost:27017/dameGame
+1. soit lancer un cmd, LaunchCordova.bat, mongo, use dameGame, show collections, db.joueurs.find() et db.parties.find()
 En cas de mauvaise manipulation, pour drop les tables : db.TABLE.drop()
