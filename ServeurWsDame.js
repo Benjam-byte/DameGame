@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////BD ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+///////////////////////////////////////////////////////////////BD ///////////////////////////////////////////////////
 var mongoose = require('mongoose');
 //Schéma pour la table Joueur
 const joueurSchema = new mongoose.Schema({
@@ -57,9 +57,11 @@ const partieSchema = new mongoose.Schema({
 //Création des models pour Joueur et Partie
 const Joueur = mongoose.model('Joueur', joueurSchema);
 const PartieS = mongoose.model('PartieS', partieSchema);
-///////////////////////////////////////////////////  FONCTION BD ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+///////////////////////////////////////////////////  FONCTION BD ////////////////////////////////////////////////////////////////////////
 // 
 //----------------- Joueur ------------------------------//
+
+//Test si on peut créer le couple login/mdp, sinon s'il existe un couple login/mdp déjà enregistré
 async function connexion(login, password) {
     var joueur = new Joueur({ login: login, pass: password });
     try {
@@ -82,7 +84,7 @@ async function connexion(login, password) {
 }
 
 
-
+// GET la liste des joueurs
 function getAllJoueur() {
     var promise = Joueur.find().exec();
     promise.then(function (doc) {
@@ -93,17 +95,17 @@ function getAllJoueur() {
     });
 }
 
-
+// GET le nombre de parties gagnées d'un login
 function getNbParties(login) {
     var promise = Joueur.findOne({ login: login }).exec();
     promise.then(function (doc) {
         console.log("Get nbParties : " + doc.nbPartiesGagnees);
         //if(afficherDansHTMLLeTexteSuivant(doc.nbPartiesGagnees)) return true; else return false;
-        //bon je vois comment on fait autrement, remplacer cette méthode par celle faisant la maj dans le eladerboard
+        //remplacer par la méthode faisant la maj dans le leaderboard
     });
 }
 
-
+// GET le booléen estDejaConnecte d'un login
 function getEstDejaConnecte(login) {
     var promise = Joueur.findOne({ login: login }).exec();
     promise.then(function (doc) {
@@ -116,6 +118,7 @@ function getEstDejaConnecte(login) {
     });
 }
 
+// GET le booléen estEnPartie d'un login
 function getEstEnPartie(login) {
     var promise = Joueur.findOne({ login: login }).exec();
     promise.then(function (doc) {
@@ -128,6 +131,7 @@ function getEstEnPartie(login) {
     });
 }
 
+// Incrémente le nombre de parties gagnées d'un login
 function plusUnePartieGagnee(login) {
     var promise = Joueur.findOne({ login: login }).exec();
     promise.then(function (doc) {
@@ -147,6 +151,7 @@ function plusUnePartieGagnee(login) {
     });
 }
 
+// Change la valeur du booléen estDejaConnecte d'un login
 function updateEstDejaConnecte(login) {
     var promise = Joueur.findOne({ login: login }).exec();
     promise.then(function (doc) {
@@ -166,6 +171,7 @@ function updateEstDejaConnecte(login) {
     });
 }
 
+// Change la valeur du booléen estEnPartie d'un login
 function updateEstEnPartie(login) {
     var promise = Joueur.findOne({ login: login }).exec();
     promise.then(function (doc) {
@@ -186,6 +192,8 @@ function updateEstEnPartie(login) {
 }
 
 //----------------- Partie ------------------------------//
+
+// Ajoute une nouvelle partie dans la BD
 function ajouterUneNouvellePartie(login1, login2, board, dernierJoueur) {
     var game = new PartieS({ login1: login1, login2: login2, board: board, dernierJoueur: dernierJoueur });
     try {
@@ -204,6 +212,7 @@ function ajouterUneNouvellePartie(login1, login2, board, dernierJoueur) {
     }
 }
 
+// GET la liste des Parties (en cours)
 function getAllParties() {
     var promise = PartieS.find().exec();
     promise.then(function (doc) {
@@ -211,6 +220,7 @@ function getAllParties() {
     })
 }
 
+// GET le board et le dernierJoueur d'une partie
 function getBoardEtDernierJoueur(login1, login2) {
     var promise = PartieS.findOne({ login1: login1, login2: login2 }).exec();
     promise.then(function (doc) {
@@ -220,6 +230,7 @@ function getBoardEtDernierJoueur(login1, login2) {
     });
 }
 
+// Met à jour le board et le dernierJoueur d'une partie
 function updateBoardEtDernierJoueur(login1, login2, board, dernier) {
     var promise = PartieS.findOne({ login1: login1, login2: login2 }).exec();
     promise.then(function (doc) {
@@ -238,6 +249,7 @@ function updateBoardEtDernierJoueur(login1, login2, board, dernier) {
     });
 }
 
+// DELETE d'une partie dans la BD
 function deletePartieFinie(login1, login2) {
     try {
         console.log("Suppression de la partie...");
@@ -250,15 +262,16 @@ function deletePartieFinie(login1, login2) {
         return false;
     }
 }
-////////////////////////////////////////////////////////////////// BD ////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// BD ////////////////////////////////////////////////////////////////////////////
 
 
-
+// Connexion à la BD
 function ouvrirDB() {
     mongoose.connect('mongodb://localhost:27017/dameGame');
     console.log("Connection...");
 }
 
+// Fermeture de la connexion
 function fermerDB() {
     mongoose.connection.close();
     console.log("Closing connection.")
@@ -270,28 +283,23 @@ ouvrirDB();
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-
-
     console.log("Connection Successful!");
 });
 
+////////////////////////////////////////////////// Websocket //////////////////////////////////////////////////////////////////
 
-
-
-///////////////////////////////////////////////////////////////// Websocket //////////////////////////////////////////////////////////////////////////////
-
-/** - ca viens du serveur + ca viens d'un client
+/** - ça vient du serveur + ça vient d'un client
  * code 0 : donne ton nom
- * code 0.5 : je souhaite rejouier
- * code 1 : demarrer une partie
+ * code 0.5 : je souhaite rejouer
+ * code 1 : démarrer une partie
  * code 2 : joue
  * code 3 : execute ce coup
- * code 4 : victoire/defaite
- * code 5 : la partie est supprimé
- * code 5.5 : la partie est supprimé suite au desistement de l'autre joueur
+ * code 4 : victoire/défaite
+ * code 5 : la partie est supprimée
+ * code 5.5 : la partie est supprimée suite au désistement de l'autre joueur
  * code 6 : un joueur a quitté la partie / je ne souhaite plus attendre
- * code 7 : le joueur s'est reconnecté la partie vas reprendre
- * code 8 : voici le tableau que tu doit utiliser (joueur qui se reconnecte)
+ * code 7 : le joueur s'est reconnecté la partie va reprendre
+ * code 8 : voici le tableau que tu dois utiliser (joueur qui se reconnecte)
  */
 
 const http = require('http');
@@ -312,7 +320,7 @@ var lastId = 0;
 
 var promise = PartieS.find().exec();
 promise.then(function (doc) {
-    console.log("init du serveur ...");
+    console.log("Init du serveur...");
     for (var i = 0; i < doc.length; i++) {
         var j1 = new Clients("", doc[i].login1);
         var j2 = new Clients("", doc[i].login2);
@@ -322,16 +330,16 @@ promise.then(function (doc) {
         partie.etat = "Paused"
         partieEncours.push(partie);
     }
-    console.log("init terminé");
+    console.log("Init terminé");
 })
-//Mise en place des événements WebSockets 
 
-console.log("serveur créer");
+//Mise en place des événements WebSockets 
+console.log("Serveur créé");
 wsServer.on('request', function (request) {
     const connection = request.accept(null, request.origin);
     if (clientsUnknown.indexOf(connection) === -1) {
         clientsUnknown.push(connection);
-        console.log("jai une connection");
+        console.log("J'ai une connexion");
         var promise = Joueur.find().exec();
         promise.then(function (doc) {
             if (doc) {
@@ -341,7 +349,6 @@ wsServer.on('request', function (request) {
         });
     }
 
-
     connection.on('message', function (message) {
         var message = JSON.parse(message.utf8Data);
         findCode(message, connection);
@@ -349,13 +356,11 @@ wsServer.on('request', function (request) {
 
     });
 
-
-
     connection.on('close', function (reasonCode, description) {
         var p = findPartyFromConnection(connection);
-        console.log("une connection de perdu");
-        if (p !== false) { // le joueur etais en partie
-            console.log("le joueur etais en partie");
+        console.log("Une connexion de perdu");
+        if (p !== false) { // le joueur était en partie
+            console.log("Le joueur était en partie");
             if (p.joueur1.connection === connection) {
                 updateEstDejaConnecte(p.joueur1.name);
                 p.j1R = false;
@@ -364,7 +369,7 @@ wsServer.on('request', function (request) {
                 p.j2R = false;
             }
             p.setPause(connection);
-        } else { //le joueur n'y etait pas
+        } else { //le joueur n'y était pas
             var uc = findUnknownFromConnection(connection);
             if (uc !== false) {
                 clientsUnknown.splice(uc, 1);
@@ -384,10 +389,9 @@ wsServer.on('request', function (request) {
 
 });
 
-
 function findCode(message, connection) { 
     if (message.code === 0) {
-        console.log("reception code 0");
+        console.log("Réception code 0");
         var promise = Joueur.findOne({ login: message.myName, pass: message.password }).exec();
         promise.then(function (doc) {
             if (doc) {
@@ -411,13 +415,13 @@ function findCode(message, connection) {
             }
         })
     } else if (message.code === 0.3) {
-        console.log("reception code 0.3");
+        console.log("Réception code 0.3");
         var promise = Joueur.findOne({ login: message.myName }).exec();
         promise.then(function (doc) {
             console.log("Get estEnPartie : " + doc.estEnPartie);
             if (doc.estEnPartie) {
                 var p = findPartyByLogin(message.myName);
-                console.log("je suis en partie");
+                console.log("Je suis en partie");
                 if (p.joueur1.name === message.myName) {
                     p.joueur1.connection = connection;
                     var promise = PartieS.findOne({ login1: p.joueur1.name, login2: p.joueur2.name }).exec();
@@ -434,13 +438,13 @@ function findCode(message, connection) {
                     });
                 }
             } else {
-                console.log("raf du getestenpartie");
+                console.log("Ref du getestenpartie");
                 setName(message.myName, connection);
                 startGame();
             }
         });
     } else if (message.code === 0.5) {
-        console.log("reception code 0.5")
+        console.log("Réception code 0.5")
         for (var i = 0; i < clientsEnAttente.length; i++) {
             if (clientsEnAttente[i].connection === connection) {
                 clientsDispo.push(clientsEnAttente[i]); 
@@ -449,23 +453,23 @@ function findCode(message, connection) {
         }
         startGame();
     } else if (message.code === 1) {
-        console.log("reception code 1");
+        console.log("Réception code 1");
         var partie = findParty(message.id);
-        console.log("info recu dans le code 1 :");
+        console.log("Info recu dans le code 1 :");
         console.log(message.id);
         console.log(message.ready);
         if (partie.joueur1.connection === connection && message.ready) {
             partie.j1R = true;
-            console.log("j1 est ready");
+            console.log("J1 est ready");
         } else if (partie.joueur2.connection === connection && message.ready) {
             partie.j2R = true;
-            console.log("j2 est ready");
+            console.log("J2 est ready");
         }
         if (partie.j1R === true && partie.j2R === true) {
             partie.changeState("Started");
         }
     } else if (message.code === 2) {
-        console.log("reception code 2");
+        console.log("Réception code 2");
         var partie = findParty(message.id);
         partie.changeLastPlayer();
         var promise = PartieS.findOne({ login1: partie.joueur1.name, login2: partie.joueur2.name }).exec();
@@ -473,7 +477,7 @@ function findCode(message, connection) {
             doc.board = message.board;
             doc.dernierJoueur = partie.lastPlayer.name;
             try {
-                console.log("Update board et dernier...");
+                console.log("Update board et dernierJoueur...");
                 doc.save();
                 console.log("Update done.");
                 if (partie.joueur1.connection === connection) {
@@ -486,12 +490,12 @@ function findCode(message, connection) {
                 return true;
             }
             catch {
-                console.log("Erreur dans l'update board et dernier.")
+                console.log("Erreur dans l'update board et dernierJoueur.")
                 return false;
             }
         });
     } else if (message.code === 3) {
-        console.log("reception code 3");
+        console.log("Réception code 3");
         var partie = findParty(message.id);
         if (partie.joueur1.connection === connection) {
             partie.sendJ1(JSON.stringify({ code: 2 }));
@@ -500,7 +504,7 @@ function findCode(message, connection) {
         }
 
     } else if (message.code === 4) {
-        console.log("reception code 4");
+        console.log("Réception code 4");
         var partie = findParty(message.id);
         if (partie.joueur1.connection === connection) {
             partie.j1end = true;
@@ -522,7 +526,7 @@ function findCode(message, connection) {
             updateEstEnPartie(partie.joueur2.name);
         }
     } else if (message.code === 6) {
-        console.log("reception code 6");
+        console.log("Réception code 6");
         var partie = findParty(message.id);
         console.log(partie)
         if (partie.etat === "Paused") {
@@ -533,7 +537,7 @@ function findCode(message, connection) {
         }
 
     } else if (message.code === 7) {
-        console.log("reception code 7");
+        console.log("Réception code 7");
         var partie = findParty(message.id);
         if (partie.etat === "Paused") {
             if (partie.joueur1.connection === connection) {
@@ -543,7 +547,7 @@ function findCode(message, connection) {
             }
         }
     } else if (message.code === 8) {
-        console.log("reception code 8");
+        console.log("Réception code 8");
         var partie = findParty(message.id);
         if (partie.joueur1.connection === connection) {
             partie.j1R = true;
@@ -577,16 +581,16 @@ function findCode(message, connection) {
 }
 
 function startGame() {
-    if (clientsDispo.length === 2) { // si il y a deux client dispo on creer une partie et on les retires
-        var p = new Partie(clientsDispo[0], clientsDispo[1], lastId); /// a chaque connection il creer potentiellement une partie ? mais sa se trouve y'ne a plus
+    if (clientsDispo.length === 2) { // s'il y a deux clients dispos on crée une partie et on les retire
+        var p = new Partie(clientsDispo[0], clientsDispo[1], lastId); /// à chaque connexion il crée potentiellement une partie ? mais ça se trouve il n'y en a plus
         lastId = lastId + 1;
         partieEncours.push(p);
         clientsDispo = clientsDispo.slice(2);
-        console.log("une partie de créer");
+        console.log("Une partie de créée");
         p.start();
         updateEstEnPartie(p.joueur1.name);
         updateEstEnPartie(p.joueur2.name);
-        ajouterUneNouvellePartie(p.joueur1.name, p.joueur2.name, [], p.joueur2.name); /// gerer en cas de coupure 
+        ajouterUneNouvellePartie(p.joueur1.name, p.joueur2.name, [], p.joueur2.name); /// gérer en cas de coupure 
     }else{
         clientsDispo[0].connection.send(JSON.stringify({code : 0.2}));
     }
@@ -638,7 +642,7 @@ function findPartyByLogin(login) {
     console.log(partieEncours);
     for (var i = 0; i < partieEncours.length; i++) {
         if (partieEncours[i].joueur1.name === login || partieEncours[i].joueur2.name === login) {
-            console.log("j'ai trouvé la partie");
+            console.log("J'ai trouvé la partie");
             console.log(partieEncours[i]);
             return partieEncours[i];
         }
@@ -731,7 +735,7 @@ class Partie {
     }
 
     exeState() {
-        console.log("jexec state")
+        console.log("J'exec state")
         if (this.etat === 'Started') {
             var j1m = JSON.stringify({ code: 2 });
             this.sendJ1(j1m);
@@ -742,10 +746,10 @@ class Partie {
 
         if (this.lastPlayer === this.joueur1) {
             this.lastPlayer = this.joueur2;
-            console.log("le player est actuel est le : 2 ");
+            console.log("Le player actuel est le : 2 ");
         } else {
             this.lastPlayer = this.joueur1;
-            console.log("le player est actuel est le : 1 ");
+            console.log("Le player actuel est le : 1 ");
         }
     }
 
@@ -764,7 +768,7 @@ class Partie {
     }
 
     setPause(connection) {
-        console.log("la partie est mise en pause");
+        console.log("La partie est mise en pause");
         this.etat = "Paused";
         if (this.joueur1.connection === connection) {
             this.sendJ2(JSON.stringify({ code: 6 }));

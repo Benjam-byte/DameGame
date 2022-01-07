@@ -1,24 +1,24 @@
 
-////////////////////////////////////////////////////////////////Constante coté client ////////////////////////////////////////////////////////////////////////////////////////////
-const onlinemode = true; //possibilité de jouer directement horsligne (parametre non accessible si le client lancé)
+//////////////////////////////////////////////////////////////// Constante coté client ////////////////////////////////////////////////////////////////////////////////////////////
+const onlinemode = true; //possibilité de jouer directement hors-ligne (paramètre non accessible si le client est lancé)
 game = "";
 nameJ = ""
 passJ = ""
 
 
-////////////////////////////////////////////////////////////////// Fonction du jeux    /////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////// Fonction du jeu /////////////////////////////////////////////////////////////////////////////////////////
 if (onlinemode) {
 
     /** 
-     * cache le bordereau d'information en cas de mauvais mots de passe
+     * cache le bordereau d'information en cas de mauvais mot de passe
      */
     retryConnection = () => {
         window.document.getElementById("wrongPass").classList.add("hidden");
     }
 
     /** 
-     * cache le leaderboard et affiche un plateau de jeux
-     * emets un signal vers le serveur pour signifié son envie de demarrer une partie
+     * cache le leaderboard et affiche un plateau de jeu
+     * émet un signal vers le serveur pour signifier son envie de démarrer une partie
      */
     play = () => {
         window.document.getElementById("homeVue").style.display = "none";
@@ -28,7 +28,7 @@ if (onlinemode) {
     }
 
     /** 
-     * essaye de se connecter en recuperant les valeurs des inputs
+     * essaye de se connecter en récuperant les valeurs des inputs
      */
     signIn = () => {
         console.log("je m'inscrit");
@@ -54,7 +54,7 @@ if (onlinemode) {
     }
 
     /** 
-     * retire le leaderboard et affiche un le plateau de jeux
+     * retire le leaderboard et affiche le plateau de jeu
      * signifie au serveur qu'il souhaite rejouer 
      */
     playAgain = () => {
@@ -64,8 +64,8 @@ if (onlinemode) {
     }
 
     /** 
-     * retire le bordereau d'information en cas de pause de la partie et detruit tout les elements
-     * du board afin d'ensuite signifié au serveur qu'il ne souhaitais plus attendre 
+     * retire le bordereau d'information en cas de pause de la partie et detruit tous les élements
+     * du board afin d'ensuite signifier au serveur qu'il ne souhaitait plus attendre 
      */
     stopWait = () => { 
         document.getElementById("pauseGame").classList.add("hidden");
@@ -81,7 +81,7 @@ if (onlinemode) {
 
     //lors du handshake entre le client et le serveur
     ws.onopen = function () {
-        console.log("je suis connécté");
+        console.log("Je suis connecté");
     };
 
     //lors de la reception d'un message on le traduit dans le bon format
@@ -107,7 +107,7 @@ if (onlinemode) {
 }
 
 /** 
- * detruit tous les elements du leaderboard
+ * détruit tous les élements du leaderboard
  */
 function undrawLeaderBoard() {
     var myNode = document.getElementById("scoreboard");
@@ -118,7 +118,7 @@ function undrawLeaderBoard() {
 
 /** 
  * param tab
- * dessine un tout nouveau leaderboard  COTNINUER A PARTIR DICI
+ * dessine un tout nouveau leaderboard CONTINUER A PARTIR D'ICI
  */
 function drawLeaderBoard(tab) {
     var ld = window.document.getElementsByClassName("scoreboard");

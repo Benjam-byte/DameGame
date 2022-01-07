@@ -49,7 +49,7 @@ class Board {
 
     /** 
      * param bViz int[]
-     * permet de dessiner le board par rapport a un etat du plateau
+     * permet de dessiner le board par rapport à un état du plateau
      */
     drawBoardFrombViz(bViz) {
         console.log(bViz);
@@ -123,7 +123,7 @@ class Board {
     }
 
     // génère des pions et les places sur le plateau
-    // reverse commence a tracer les cases sur la seconde partie du tableau
+    // reverse commence à tracer les cases sur la seconde partie du tableau
     createPions(color, reverse) {
         let coef = reverse ? 0 : (this.size / 2) + 1
         let pions = []
@@ -151,7 +151,7 @@ class Board {
         return square;
     }
 
-    // retourne les coups possible d'un joueur
+    // retourne les coups possibles d'un joueur
     searchShot(color) {
         let shots = []
         let pions = color === 'white' ? this.whitePions : this.blackPions;
@@ -168,7 +168,7 @@ class Board {
         return shotsEatPion.length ? shotsEatPion : shots;
     }
 
-    // right permet de vérifier le sens de la diagonale et queen d'interpréter le mouvement comme libre (pas de limite arrière)
+    // right permet de vérifier le sens de la diagonale et queen d'interpréter le mouvement comme libre (pas de limites arrières)
     checkForwardMovement(pion, x, y, right, queen) {
         let shotsForPion = [];
         let becomesQueen = pion.color === 'white' ? (y === 0 ? true : false) : (y === this.size - 1 ? true : false);
@@ -220,15 +220,15 @@ class Board {
         // cherche les coups d'une dame
         let condition = true;
         let queenShots = []
-        // tant que la condition est respecté on incrémente la diagonale
+        // tant que la condition est respectée on incrémente la diagonale
         while (condition) {
             // on récupère un mouvement
             let interMovements = this.checkForwardMovement(pion, x, y, right, backward);
-            // si un mouvement est récupéré c'est qu'on peut jouer dans cette drection
+            // si un mouvement est récupéré c'est qu'on peut jouer dans cette direction
             if (interMovements.length) {
                 queenShots = queenShots.concat(interMovements);
                 condition = interMovements[0].eatedPion ? false : true;
-                // sinon c'est qu'il n'y a plus rien a jouer sur cette diagonale
+                // sinon c'est qu'il n'y a plus rien à jouer sur cette diagonale
             } else {
                 condition = false;
             }
@@ -247,9 +247,9 @@ class Board {
             let y = pion.color === 'white' ? pion.position.y - 1 : pion.position.y + 1;
             let x1 = pion.position.x - 1;
             let x2 = pion.position.x + 1;
-            // a gauche
+            // à gauche
             let forwardLeft = this.checkForwardMovement(pion, x1, y)
-            // a droite
+            // à droite
             let forwardRight = this.checkForwardMovement(pion, x2, y, true)
             // regarde si on peut manger un pion vers l'arrière selon notre couleur
             let yReverse = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1;
@@ -263,17 +263,17 @@ class Board {
             let x1 = pion.position.x - 1;
             let x2 = pion.position.x + 1;
 
-            // regarde les coups disponible a gauche dans le sens de la couleur
+            // regarde les coups disponible à gauche dans le sens de la couleur
             let forwardLeft = this.checkQueenMovement(pion, x1, y, false, false)
 
-            // regarde les coups disponible a droite dans le sens de la couleur
+            // regarde les coups disponible à droite dans le sens de la couleur
             let forwardRight = this.checkQueenMovement(pion, x2, y, true, false)
 
-            // regarde les coups disponible a gauche dans le sens inverse de la couleur
+            // regarde les coups disponible à gauche dans le sens inverse de la couleur
             y = pion.color === 'white' ? pion.position.y + 1 : pion.position.y - 1; // inverse le sens
             let backwardLeft = this.checkQueenMovement(pion, x1, y, false, true)
 
-            // regarde les coups disponible a droite dans le sens inverse de la couleur
+            // regarde les coups disponible à droite dans le sens inverse de la couleur
             let backwardRight = this.checkQueenMovement(pion, x2, y, true, true)
 
             shotsForPion = forwardLeft.concat(forwardRight, backwardLeft, backwardRight);
@@ -281,7 +281,7 @@ class Board {
         return shotsForPion;
     }
 
-    // emet un feedback des coups possible d'un joueur et retourne un tableau des coups possible
+    // émet un feedback des coups possibles d'un joueur et retourne un tableau des coups possibles
     viewShots(color) {
         this.clearViewShots();
         let shots = this.searchShot(color);
@@ -291,14 +291,14 @@ class Board {
         return shots;
     }
 
-    // emet un feedback du coup envisagé
+    // émet un feedback du coup envisagé
     viewSpecificShot(shot) {
         if (shot.destination.ref.classList.contains('available')) {
             shot.destination.ref.classList.add('selected');
         }
     }
 
-    // supprime le feedback des coups possible
+    // supprime le feedback des coups possibles
     clearViewShots() {
         let shotsAvailable = document.getElementsByClassName('available');
         while (shotsAvailable[0]) {

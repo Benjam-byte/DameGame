@@ -53,17 +53,17 @@ class PartyOnLine {
 
     /** 
      * param shotAd Shot 
-     * effectue sur le plateau le shot transmis en parametre
+     * effectue sur le plateau le shot transmit en paramètre
      */
     playAShot(shotAd) {
         let shot = shotAd;
         // on fait bouger le pion sur cette case
         shot.pion.move(shot.destination);
-        // on regarde si le pion devient dame
+        // on regarde si le pion devient une dame
         if (shot.queen) {
             shot.pion.becomesQueen();
         }
-        // si le coup a manger un pion on regarde si il peut enchainer
+        // si le coup a mangé un pion on regarde s'il peut enchainer
         if (shot.eatedPion) {
             shot.eatedPion.delete();
             this.requiredShots = [];
@@ -92,7 +92,7 @@ class PartyOnLine {
 
     /** 
      * param pos {x:int,y:int}
-     * permet d'obtenir l'instance d'un pion pour une position parmis les pions du joueur
+     * permet d'obtenir l'instance d'un pion pour une position parmi les pions du joueur
      */
     getPion(pos) {
         if (this.playerAd.color === 'black') {
@@ -111,7 +111,7 @@ class PartyOnLine {
     }
     /** 
      * param pos {x:int,y:int}
-     * permet d'obtenir l'instance d'un pion pour une position donnée parmis les pions du joueur adverse
+     * permet d'obtenir l'instance d'un pion pour une position donnée parmi les pions du joueur adverse
      * 
      */
     getPionEated(pos) {
@@ -153,7 +153,7 @@ class PartyOnLine {
     }
 
     /** 
-     * Desactive la possibilité de jouer et retire les possibilités de jeux
+     * Désactive la possibilité de jouer et retire les possibilités de jeux
     */
     deleteEvent() {
         this.board.ref.removeEventListener('click', this.clickEvent);
@@ -162,7 +162,7 @@ class PartyOnLine {
     }
 
     /** 
-     * fonction destiné à etre utiliser dans un eventListener 
+     * fonction destinée à être utilisée dans un eventListener 
      * est le "main" du jeux
      */
     clickEvent = ((event) => {
@@ -170,7 +170,7 @@ class PartyOnLine {
         let condition = (chaine === event.target || chaine === false) ? true : false;
         // si on clique sur un pion
         if (event.target.classList.contains("pion") && condition) {
-            // on supprime le feedback des coups si il y'en avait
+            // on supprime le feedback des coups s'il y en avait
             this.board.clearViewSpecificShot();
             // on récupère les pions du joueur
             let pions = this.gameTurn.color === "white" ? this.board.whitePions : this.board.blackPions;
@@ -179,7 +179,7 @@ class PartyOnLine {
                 if (pion.ref === event.target) {
                     this.pionpos = pion.position;
                     this.selectedSquare = pion.parent;
-                    // on regarde parmi les coups disponible ceux correspondant au pion sélectionné
+                    // on regarde parmi les coups disponibles ceux correspondant au pion sélectionné
                     this.currentShots.forEach(shot => {
                         if (shot.pion === pion) { //////////////////////////////////////// reprendre ici //////////////////////////////////////
                             // on émet un feedback des coups possible sur ce pion
@@ -188,23 +188,23 @@ class PartyOnLine {
                     })
                 }
             })
-            // si le clique correspond a une case possible pour le pion sélectionné
+            // si le clique correspond à une case possible pour le pion sélectionné
         } else if ((event.target.classList.contains("selected"))) {
             // on supprime le feedback
             this.board.clearViewSpecificShot();
             // on cherche la case de destination
             let destinationSquare = this.board.searchCase(parseInt(event.target.getAttribute("x")), parseInt(event.target.getAttribute("y")));
-            // on cherche le coup des coups courant
+            // on cherche le coup des coups courants
             let shot = this.searchCurrentShot(destinationSquare);
             this.eatedpionPos = shot.eatedPion.position;
             //this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos, board : this.board.getVizBoard() }));
             // on fait bouger le pion sur cette case
             shot.pion.move(destinationSquare);
-            // on regarde si le pion devient dame
+            // on regarde si le pion devient une dame
             if (shot.queen) {
                 shot.pion.becomesQueen();
             }
-            // si le coup a manger un pion on regarde si il peut enchainer
+            // si le coup a mangé un pion on regarde s'il peut enchaîner
             if (shot.eatedPion) {
                 shot.eatedPion.delete();
                 this.requiredShots = [];
@@ -240,7 +240,7 @@ class PartyOnLine {
         this.board.ref.addEventListener('click', this.clickEvent);
     }
 
-    // trouve les coups disponible pour un joueur
+    // trouve les coups disponibles pour un joueur
     viewDisponibleShot() {
         let player = this.gameTurn.color == 'white' ? "white" : "black";
         this.currentShots = this.board.viewShots(player);
@@ -248,7 +248,7 @@ class PartyOnLine {
 
     /** 
      * param square Case
-     * cherche parmis les shots possible lequels correspond a la case donnée
+     * cherche parmi les shots possibles lequel correspond à la case donnée
      */
     searchCurrentShot(square) {
         let currentShot;

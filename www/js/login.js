@@ -1,6 +1,6 @@
 window.onload=function()   { 
 
-    // elements animés
+    // élements animés
     const switchDiv = document.getElementsByClassName("switch-side");
     const buttonGoToSignUp = document.getElementsByClassName("goToSignUp");
     const buttonGoToSignIn = document.getElementsByClassName("goToSignIn");

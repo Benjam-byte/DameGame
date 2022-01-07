@@ -18,7 +18,7 @@ class Party {
             let condition = (chaine === event.target || chaine === false) ? true : false;
             // si on clique sur un pion
             if(event.target.classList.contains("pion") && condition){
-                // on supprime le feedback des coups si il y'en avait
+                // on supprime le feedback des coups s'il y en avait
                 this.board.clearViewSpecificShot();
                 // on récupère les pions du joueur
                 let pions = this.gameTurn.color === "white" ? this.board.whitePions :  this.board.blackPions;
@@ -26,30 +26,30 @@ class Party {
                 pions.forEach(pion => {
                     if(pion.ref === event.target){
                         this.selectedSquare = pion.parent;
-                        // on regarde parmi les coups disponible ceux correspondant au pion sélectionné
+                        // on regarde parmi les coups disponibles ceux correspondants au pion sélectionné
                         this.currentShots.forEach(shot => {
                             if(shot.pion === pion){
-                                // on émet un feedback des coups possible sur ce pion
+                                // on émet un feedback des coups possibles sur ce pion
                                 this.board.viewSpecificShot(shot)
                             }
                         })
                     }
                 })
-            // si le clique correspond a une case possible pour le pion sélectionné
+            // si le clique correspond à une case possible pour le pion sélectionné
             } else if ((event.target.classList.contains("selected"))){
                 // on supprime le feedback
                 this.board.clearViewSpecificShot();
                 // on cherche la case de destination
                 let destinationSquare = this.board.searchCase(parseInt(event.target.getAttribute("x")), parseInt(event.target.getAttribute("y")));
-                // on cherche le coup des coups courant
+                // on cherche le coup des coups courants
                 let shot = this.searchCurrentShot(destinationSquare);
                 // on fait bouger le pion sur cette case
                 shot.pion.move(destinationSquare);
-                // on regarde si le pion devient dame
+                // on regarde si le pion devient une dame
                 if(shot.queen){
                     shot.pion.becomesQueen();
                 }
-                // si le coup a manger un pion on regarde si il peut enchainer
+                // si le coup a mangé un pion on regarde s'il peut enchaîner
                 if(shot.eatedPion){
                     shot.eatedPion.delete();
                     this.requiredShots = [];
@@ -76,7 +76,7 @@ class Party {
         })
     }
 
-    // trouve les coups disponible pour un joueur
+    // trouve les coups disponibles pour un joueur
     viewDisponibleShot(){
         let player =  this.gameTurn.color == 'white' ? this.player1 : this.player2;
         this.currentShots = this.board.viewShots(player.color)
