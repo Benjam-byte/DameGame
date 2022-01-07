@@ -27,14 +27,18 @@ class Pion {
         newParent.ref.appendChild(this.ref);
         newParent.pion = this;
     }
-
+    /** 
+     * Supprime un pion
+     */
     delete(){
         this.parent.parent.deletePion(this)
         delete this.parent.pion;
         this.ref.remove();
         delete this;
     }
-
+    /** 
+     * transforme un pion en reine 
+     */
     becomesQueen(){
         this.isQueen = true;
         this.ref.classList.add('queen')

@@ -1,26 +1,25 @@
 
-/** 
- * code 0 : donne ton nom
- * code 1 : demarrer une partie
- * code 2 : joue
- * code 3 : execute ce coup
- * code 4 : victoire/defaite
- */
-
-
-const onlinemode = true;
+////////////////////////////////////////////////////////////////Constante coté client ////////////////////////////////////////////////////////////////////////////////////////////
+const onlinemode = true; //possibilité de jouer directement horsligne (parametre non accessible si le client lancé)
 game = "";
 nameJ = ""
 passJ = ""
 
 
-
+////////////////////////////////////////////////////////////////// Fonction du jeux    /////////////////////////////////////////////////////////////////////////////////////////
 if (onlinemode) {
 
+    /** 
+     * cache le bordereau d'information en cas de mauvais mots de passe
+     */
     retryConnection = () => {
         window.document.getElementById("wrongPass").classList.add("hidden");
     }
 
+    /** 
+     * cache le leaderboard et affiche un plateau de jeux
+     * emets un signal vers le serveur pour signifié son envie de demarrer une partie
+     */
     play = () => {
         window.document.getElementById("homeVue").style.display = "none";
         window.document.getElementById("board").classList.remove("hidden");
@@ -28,6 +27,9 @@ if (onlinemode) {
         ws.send(ans);
     }
 
+    /** 
+     * essaye de se connecter en recuperant les valeurs des inputs
+     */
     signIn = () => {
         console.log("je m'inscrit");
         nameJ = window.document.getElementById("username").value;
@@ -36,7 +38,11 @@ if (onlinemode) {
         ws.send(ans);
     }
 
-    restart = () => { // ne fonctionne pas car place directement avant qu'il est rappuyer sur rejouer le deuxieme joueur en partie et donc fais n'importe quoi mdrrr il vas falloir rajouter un code
+    /** 
+     * Retire le bordereau d'information en cas de fin de partie et retire du plateau tout les elements HTML qu'il contient
+     * affiche le leaderboard
+     */
+    restart = () => { 
         document.getElementById("endGame").classList.add("hidden");
         var myNode = document.getElementById("board");
         while (myNode.firstChild) {
@@ -47,13 +53,21 @@ if (onlinemode) {
 
     }
 
+    /** 
+     * retire le leaderboard et affiche un le plateau de jeux
+     * signifie au serveur qu'il souhaite rejouer 
+     */
     playAgain = () => {
         window.document.getElementById("home2Vue").style.display = "none";
         window.document.getElementById("board").classList.remove("hidden");
         ws.send(JSON.stringify({ code: 0.5 }));
     }
 
-    stopWait = () => { // ne fonctionne pas car place directement avant qu'il est rappuyer sur rejouer le deuxieme joueur en partie et donc fais n'importe quoi mdrrr il vas falloir rajouter un code
+    /** 
+     * retire le bordereau d'information en cas de pause de la partie et detruit tout les elements
+     * du board afin d'ensuite signifié au serveur qu'il ne souhaitais plus attendre 
+     */
+    stopWait = () => { 
         document.getElementById("pauseGame").classList.add("hidden");
         var myNode = document.getElementById("board");
         while (myNode.firstChild) {
@@ -61,22 +75,28 @@ if (onlinemode) {
         }
         ws.send(JSON.stringify({ code: 6, id: game.id }));
     }
+
+
     const ws = new WebSocket('ws://127.0.1:9898/'); //on ouvre la connexion 
 
+    //lors du handshake entre le client et le serveur
     ws.onopen = function () {
         console.log("je suis connécté");
     };
 
+    //lors de la reception d'un message on le traduit dans le bon format
     ws.onmessage = function (e) {
         var msg = JSON.parse(e.data);
         findCode(msg, ws);
     };
 
+    //en cas d'erreur avec le serveur on affiche
     ws.onerror = function (event) {
         console.error("WebSocket error observed:", event);
     };
 
 } else {
+    // si l'on a parametré le modeonline = false;
     window.onload = function () {
         var game = new Party("Jean", "Paul", 10);
 
@@ -86,17 +106,22 @@ if (onlinemode) {
     }
 }
 
-
+/** 
+ * detruit tous les elements du leaderboard
+ */
 function undrawLeaderBoard() {
-    var myNode = document.getElementById("board");
+    var myNode = document.getElementById("scoreboard");
     while (myNode.firstChild) {
         myNode.removeChild(myNode.lastChild);
     }
 }
 
+/** 
+ * param tab
+ * dessine un tout nouveau leaderboard  COTNINUER A PARTIR DICI
+ */
 function drawLeaderBoard(tab) {
     var ld = window.document.getElementsByClassName("scoreboard");
-    console.log(tab);
     for (var j = 0; j < ld.length; j++) {
         var divI = document.createElement("div");
         var spanI1 = document.createElement('span');

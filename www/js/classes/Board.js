@@ -20,12 +20,15 @@ class Board {
 
     }
 
-    /** 0 pas de pion
+    /** 
+     * return int[]
+     * permet d'obtenir un tableau d'entier representant l'etat du plateau
+     * 0 pas de pion
      * 1 pion blanc
      * 2 pion noir
      * 3 dame blanche
      * 4 dame noir
-     *      */
+     */
     getVizBoard() {
         var bViz = [];
         for (var i = 0; i < this.cases.length; i++) {
@@ -44,7 +47,10 @@ class Board {
         return bViz;
     }
 
-
+    /** 
+     * param bViz int[]
+     * permet de dessiner le board par rapport a un etat du plateau
+     */
     drawBoardFrombViz(bViz) {
         console.log(bViz);
         console.log("je rentre dans la boucle");

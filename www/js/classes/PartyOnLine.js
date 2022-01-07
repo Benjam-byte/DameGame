@@ -1,7 +1,6 @@
 class PartyOnLine {
     constructor(playerName1, playerName2, size, isFirst, id, ws,board) {
          if(!board){
-             console.log("new party");
             if (isFirst) {
                 this.player = new Player(playerName1, 'white', true);
                 this.playerAd = new Player(playerName2, 'black', false);
@@ -22,7 +21,6 @@ class PartyOnLine {
             this.pionpos = '';
             this.eatedpionPos = '';
          }else{
-             console.log("new party");
             if (isFirst) {
                 this.player = new Player(playerName1, 'white', true);
                 this.playerAd = new Player(playerName2, 'black', false);
@@ -46,12 +44,17 @@ class PartyOnLine {
         
     }
 
-
+    /** 
+     * retire l'eventListener du board 
+     */
     stop(){
         this.deleteEvent();
     }
 
-
+    /** 
+     * param shotAd Shot 
+     * effectue sur le plateau le shot transmis en parametre
+     */
     playAShot(shotAd) {
         let shot = shotAd;
         // on fait bouger le pion sur cette case
@@ -87,6 +90,10 @@ class PartyOnLine {
         }
     }
 
+    /** 
+     * param pos {x:int,y:int}
+     * permet d'obtenir l'instance d'un pion pour une position parmis les pions du joueur
+     */
     getPion(pos) {
         if (this.playerAd.color === 'black') {
             for (var i = 0; i < this.board.blackPions.length; i++) {
@@ -102,7 +109,11 @@ class PartyOnLine {
             }
         }
     }
-
+    /** 
+     * param pos {x:int,y:int}
+     * permet d'obtenir l'instance d'un pion pour une position donnée parmis les pions du joueur adverse
+     * 
+     */
     getPionEated(pos) {
         if (pos !== undefined) {
             if (this.playerAd.color === 'black') {
@@ -121,7 +132,10 @@ class PartyOnLine {
         }
     }
 
-
+    /** 
+     * param pos {x:int,y:int}
+     * permet d'obtenir l'instance d'une case pour une position donnée
+     */
     getCase(pos) {
         for (var i = 0; i < this.board.cases.length; i++) {
             if (this.board.cases[i].position.x === pos.x && this.board.cases[i].position.y === pos.y) {
@@ -130,23 +144,28 @@ class PartyOnLine {
         }
     }
 
+    /** 
+     * Active la possiblité de jouer en placant l'eventListener sur le plateau
+     */
     play() {
-        console.log("je joue")
         this.viewDisponibleShot();
         this.createEvent();
     }
 
-
+    /** 
+     * Desactive la possibilité de jouer et retire les possibilités de jeux
+    */
     deleteEvent() {
-        console.log("je delete l'event");
         this.board.ref.removeEventListener('click', this.clickEvent);
         this.board.clearViewShots();
         this.board.clearViewSpecificShot();
     }
 
-    //fct event 
+    /** 
+     * fonction destiné à etre utiliser dans un eventListener 
+     * est le "main" du jeux
+     */
     clickEvent = ((event) => {
-        console.log("on me clique");
         let chaine = this.requiredShots.length ? this.requiredShots[0].pion.ref : false;
         let condition = (chaine === event.target || chaine === false) ? true : false;
         // si on clique sur un pion
@@ -175,12 +194,8 @@ class PartyOnLine {
             this.board.clearViewSpecificShot();
             // on cherche la case de destination
             let destinationSquare = this.board.searchCase(parseInt(event.target.getAttribute("x")), parseInt(event.target.getAttribute("y")));
-            console.log('destination square :');
-            console.log(destinationSquare);
             // on cherche le coup des coups courant
             let shot = this.searchCurrentShot(destinationSquare);
-            console.log("le shot proposé :");
-            console.log(shot);
             this.eatedpionPos = shot.eatedPion.position;
             //this.ws.send(JSON.stringify({ code: 2, id: this.id, shot: cycle.decycle(shot), pionpos: this.pionpos, eatedpionPos: this.eatedpionPos, board : this.board.getVizBoard() }));
             // on fait bouger le pion sur cette case
@@ -218,35 +233,30 @@ class PartyOnLine {
         }
     })
 
-    // détection des cliques
+    /** 
+     * ajoute au tableau l'eventListener avec la bonne fonction
+     */
     createEvent() {
         this.board.ref.addEventListener('click', this.clickEvent);
     }
 
     // trouve les coups disponible pour un joueur
     viewDisponibleShot() {
-        console.log("view dispo shot pour la couleur : ");
         let player = this.gameTurn.color == 'white' ? "white" : "black";
-        console.log(player);
         this.currentShots = this.board.viewShots(player);
-        console.log(this.currentShots);
     }
 
+    /** 
+     * param square Case
+     * cherche parmis les shots possible lequels correspond a la case donnée
+     */
     searchCurrentShot(square) {
         let currentShot;
-        console.log("le probleme semble venir de currentShots :");
-        console.log(this.currentShots);
-        console.log("je parcours la liste de shot disponible ");
         this.currentShots.forEach(shot => {
-            console.log(shot);
             if (shot.destination === square && this.selectedSquare.pion === shot.pion) {
                 currentShot = shot;
-                console.log("jai trouvé une correspondance de shot");
-                console.log("le shot en question :");
-                console.log(currentShot);
             }
         })
-        console.log("fin du parcours");
         return currentShot;
     }
 
@@ -259,7 +269,6 @@ class PartyOnLine {
     // vérifie si le jeu est fini
     endGame(boolean) {
         if (!this.board.whitePions.length || !this.board.blackPions.length) {
-            console.log("emission code 4");
             this.ws.send(JSON.stringify({ code: 4, id: this.id, victoire: boolean }))
             this.board.clearViewSpecificShot();
             this.board.clearViewShots();
